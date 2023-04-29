@@ -1,0 +1,86 @@
+<div class="subscription-wrapper">
+
+    <input hidden class="subscription-switch" id="subscription-switch" type="checkbox">
+
+    <div class="subscription-container">
+
+        <div class="login-container">
+
+            <h2>Sign in</h2>
+
+            <app-input
+                name="email"
+                label="Email *"
+                [ngControl]="emailCtrl"
+                [floatingLabel]="true"
+            ></app-input>
+
+            <app-input
+                type="password"
+                name="password" 
+                label="Password *"
+                [ngControl]="passwordCtrl"
+                [floatingLabel]="true"
+            ></app-input>
+
+            <button
+                class="btn btn-primary"
+                [disabled]="signInForm.invalid || loading"
+                (click)="signIn()"
+            >
+                Sign in <span *ngIf="loading" class="spinner-border spinner-border-sm"></span>
+            </button>
+        </div>
+
+        <div class="sign-up-container">
+
+            <h2>Sign up</h2>
+
+            <app-input
+                name="username"
+                label="Username *"
+                [ngControl]="usernameCtrl"
+                [floatingLabel]="true"
+            ></app-input>
+
+            <app-input
+                name="email"
+                label="Email *"
+                [ngControl]="emailCtrl"
+                [floatingLabel]="true"
+            ></app-input>
+
+            <app-input
+                type="password"
+                name="password" 
+                label="Password"
+                [ngControl]="passwordCtrl"
+                [floatingLabel]="true"
+            ></app-input>
+            
+            <button
+                class="btn btn-primary"
+                [disabled]="signUpForm.invalid|| loading"
+                (click)="signUp()"
+            >
+                Sign up <span *ngIf="loading" class="spinner-border spinner-border-sm"></span>
+            </button>
+        </div>
+
+    </div>
+
+    <div class="login-btn-wrapper">
+
+        <h3>Have an account?</h3>
+
+        <label class="btn btn-primary" for="subscription-switch">Sign in</label>
+    </div>
+
+    <div class="sign-up-btn-wrapper">
+
+        <h3>Don't have it?</h3>
+
+        <label class="btn btn-primary" for="subscription-switch">Sign up</label>
+    </div>
+
+</div>

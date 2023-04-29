@@ -1,0 +1,47 @@
+:host {
+    display: block;
+}
+
+.table {
+    margin-bottom: 0;
+    vertical-align: middle;
+}
+
+.row-expand {
+    background: #0000 !important;
+    border: none;
+    padding: 0 !important;
+}
+
+.collapse-toggle::after {
+    content: '\F283';
+    display: inline-block;
+    font-family: bootstrap-icons !important;
+    font-style: normal;
+    font-weight: normal !important;
+    font-variant: normal;
+    text-transform: none;
+    line-height: 1;
+    vertical-align: -0.125em;
+}
+
+.collapse-toggle[aria-expanded="true"]::after {
+    content: '\F27D';
+}
+
+.collapse-toggle.collapsed::after {
+    content: '\F283';
+}
+
+tfoot {
+    background: rgba(var(--app-gray_800), 1);
+    color: rgba(var(--app-gray_0), 1)
+}
+
+.sticky-head {
+    background: rgba(var(--app-gray_0), 1);
+    box-shadow: 0 2px 16px 0 #0002;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+}
