@@ -43,6 +43,16 @@ export class AuthService {
     return this.http.post<BasicResponse<string>>(environment.apiRoot, body);
   }
 
+  confirmEmail(_id: string) {
+
+    const body = {
+      action: "confirm-email",
+      payload: { _id }
+    };
+
+    return this.http.post<BasicResponse<string>>(environment.apiRoot, body);
+  }
+
   signIn(email: string, password: string) {
 
     const body = {

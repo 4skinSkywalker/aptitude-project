@@ -3,7 +3,7 @@ import { Component } from '@angular/core';
 import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
-	selector: 'app-reset-password-dialog',
+	selector: 'app-email-confirmation-dialog',
 	standalone: true,
     imports: [NgIf, NgFor],
 	template: `
@@ -22,12 +22,12 @@ import { NgbActiveModal } from '@ng-bootstrap/ng-bootstrap';
 
         <div class="modal-body">
 
-            <p>An email containing a link to reset your password has been sent to you.</p>
+            <p>Confirm your email address to access this platform.</p>
 
             <p><strong>Make sure to check your spam folder</strong> in case you don't find the email.</p>
         </div>
 	`,
 })
-export class ResetPasswordDialog {
+export class EmailConfirmationDialogComponent {
 	constructor(public activeModal: NgbActiveModal) {}
 }

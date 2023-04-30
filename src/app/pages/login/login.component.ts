@@ -1,11 +1,11 @@
-import { Component, ViewChildren } from '@angular/core';
+import { Component } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { AuthService } from 'src/app/services/auth.service';
 import { ToastService } from 'src/app/services/toast.service';
-import { EmailConfirmationDialog } from './dialogs/email-confirmation-dialog';
-import { ResetPasswordDialog } from './dialogs/reset-password-dialogs';
+import { EmailConfirmationDialogComponent } from './dialogs/email-confirmation-dialog.component';
+import { ResetPasswordDialogComponent } from './dialogs/reset-password-dialogs.component';
 
 @Component({
   selector: 'app-login',
@@ -62,7 +62,7 @@ export class LoginComponent {
       .subscribe(
         async () => {
           this.loading = false;
-          const modalRef = this.modalService.open(EmailConfirmationDialog, { centered: true });
+          const modalRef = this.modalService.open(EmailConfirmationDialogComponent, { centered: true });
           await modalRef.result;
         },
         (ex) => {
@@ -117,7 +117,7 @@ export class LoginComponent {
       );
     }
 
-    const modalRef = this.modalService.open(ResetPasswordDialog, { centered: true });
+    const modalRef = this.modalService.open(ResetPasswordDialogComponent, { centered: true });
     await modalRef.result;
   }
 }

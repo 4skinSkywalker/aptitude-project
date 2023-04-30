@@ -3,7 +3,6 @@ import { CommonModule } from '@angular/common';
 import { RouterModule, Routes } from '@angular/router';
 import { LoginComponent } from './login.component';
 import { SharedModule } from 'src/app/shared/shared.module';
-import { EmailConfirmationDialog } from './dialogs/email-confirmation-dialog';
 
 const routes: Routes = [
   { path: '', component: LoginComponent },
@@ -16,8 +15,7 @@ const routes: Routes = [
   imports: [
     CommonModule,
     RouterModule.forChild(routes),
-    SharedModule,
-    EmailConfirmationDialog
+    SharedModule
   ]
 })
 export class LoginModule { }
