@@ -4,6 +4,7 @@ import { AnonymousUser, User } from '../models/user';
 import { parseJwt } from '../utils/json';
 import { HttpClient } from '@angular/common/http';
 import { BasicResponse } from '../models/response';
+import { environment } from 'src/environments/environment';
 
 interface AuthResult {
   expiresAt: number;
@@ -30,11 +31,20 @@ export class AuthService {
 
   signUp(username: string, email: string, password: string) {
 
+    const body = {
+      action: "sign-up",
+      payload: {
+        username,
+        email,
+        password
+      }
+    };
+
+    return this.http.post<BasicResponse<string>>(environment.apiRoot, body);
   }
 
   signIn(email: string, password: string) {
 
-    const url = "https://eoa4s4j0cv52f7o.m.pipedream.net";
     const body = {
       action: "sign-in",
       payload: {
@@ -43,7 +53,8 @@ export class AuthService {
       }
     };
 
-    return this.http.post<BasicResponse<string>>(url, body)
+    return this.http
+      .post<BasicResponse<string>>(environment.apiRoot, body)
       .pipe(
         map(response => {
           const { result } = response;
@@ -53,6 +64,26 @@ export class AuthService {
         tap((authRes) => this.setSession(authRes)),
         tap(({ idToken }) => this.emitUser(idToken))
       );
+  }
+
+  resetPasswordPhase1(email: string) {
+    const body = {
+      action: "reset-password-phase-1",
+      payload: { email }
+    };
+    return this.http.post<BasicResponse<string>>(environment.apiRoot, body);
+  }
+
+  resetPasswordPhase2(email: string, resetCode: string, password: string) {
+    const body = {
+      action: "reset-password-phase-2",
+      payload: {
+        email,
+        resetCode,
+        password
+      }
+    };
+    return this.http.post<BasicResponse<string>>(environment.apiRoot, body);
   }
 
   autoSignIn() {

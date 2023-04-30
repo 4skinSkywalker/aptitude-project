@@ -9,19 +9,23 @@
             <h2>Sign in</h2>
 
             <app-input
-                name="email"
+                name="signInEmail"
                 label="Email *"
-                [ngControl]="emailCtrl"
+                [ngControl]="signInEmailCtrl"
                 [floatingLabel]="true"
             ></app-input>
 
             <app-input
                 type="password"
-                name="password" 
+                name="signInPassword" 
                 label="Password *"
-                [ngControl]="passwordCtrl"
+                [ngControl]="signInPasswordCtrl"
                 [floatingLabel]="true"
             ></app-input>
+
+            <a href="javascript:void(0)" (click)="forgotPassword()">
+                <small>I've forgot my password</small>
+            </a>
 
             <button
                 class="btn btn-primary"
@@ -39,22 +43,22 @@
             <app-input
                 name="username"
                 label="Username *"
-                [ngControl]="usernameCtrl"
+                [ngControl]="signUpUsernameCtrl"
                 [floatingLabel]="true"
             ></app-input>
 
             <app-input
-                name="email"
+                name="signUpEmail"
                 label="Email *"
-                [ngControl]="emailCtrl"
+                [ngControl]="signUpEmailCtrl"
                 [floatingLabel]="true"
             ></app-input>
 
             <app-input
                 type="password"
-                name="password" 
+                name="signUpPassword" 
                 label="Password"
-                [ngControl]="passwordCtrl"
+                [ngControl]="signUpPasswordCtrl"
                 [floatingLabel]="true"
             ></app-input>
             

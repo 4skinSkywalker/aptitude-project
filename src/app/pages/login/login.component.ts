@@ -1,8 +1,11 @@
-import { Component } from '@angular/core';
+import { Component, ViewChildren } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { AuthService } from 'src/app/services/auth.service';
 import { ToastService } from 'src/app/services/toast.service';
+import { EmailConfirmationDialog } from './dialogs/email-confirmation-dialog';
+import { ResetPasswordDialog } from './dialogs/reset-password-dialogs';
 
 @Component({
   selector: 'app-login',
@@ -13,15 +16,14 @@ export class LoginComponent {
 
   loading = false;
 
-  usernameCtrl = new FormControl<string>("", [Validators.required]);
-  emailCtrl = new FormControl<string>(
-    "federicotrotta92@gmail.com",
-    [
-      Validators.required,
-      Validators.pattern(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/)
-    ]
-  );
-  passwordCtrl = new FormControl<string>("questa è una prova", [Validators.required]);
+  emailValidators = [ Validators.required, Validators.pattern(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/) ];
+
+  signUpUsernameCtrl = new FormControl<string>("", [Validators.required, Validators.minLength(3)])
+  signUpEmailCtrl = new FormControl<string>("federicotrotta92@gmail.com", this.emailValidators);
+  signUpPasswordCtrl = new FormControl<string>("questa è una prova", [Validators.required]);
+
+  signInEmailCtrl = new FormControl<string>("federicotrotta92@gmail.com", this.emailValidators);
+  signInPasswordCtrl = new FormControl<string>("questa è una prova", [Validators.required]);
 
   signUpForm!: FormGroup;
   signInForm!: FormGroup;
@@ -29,27 +31,48 @@ export class LoginComponent {
   constructor(
     private authService: AuthService,
     private router: Router,
-    private toaster: ToastService
+    private toaster: ToastService,
+    private modalService: NgbModal
   ) { }
 
   ngOnInit() {
 
     this.signUpForm = new FormGroup({
-      username: this.usernameCtrl,
-      email: this.emailCtrl,
-      password: this.passwordCtrl
+      username: this.signUpUsernameCtrl,
+      email: this.signUpEmailCtrl,
+      password: this.signUpPasswordCtrl
     });
 
     this.signInForm = new FormGroup({
-      email: this.emailCtrl,
-      password: this.passwordCtrl
+      email: this.signInEmailCtrl,
+      password: this.signInPasswordCtrl
     });
   }
 
-  signUp() {
+  async signUp() {
+
     const val = this.signUpForm.value;
 
     if (!val.username || !val.email || !val.password) return;
+
+    this.loading = true;
+
+    this.authService
+      .signUp(val.username, val.email, val.password)
+      .subscribe(
+        async () => {
+          this.loading = false;
+          const modalRef = this.modalService.open(EmailConfirmationDialog, { centered: true });
+          await modalRef.result;
+        },
+        (ex) => {
+          this.loading = false;
+          this.toaster.show(
+            ex.error.error,
+            { classname: 'bg-danger text-light' }
+          );
+        }
+      );
   }
 
   signIn() {
@@ -63,20 +86,38 @@ export class LoginComponent {
       .signIn(val.email, val.password)
       .subscribe(
         () => {
-          this.toaster.show(
-            "Signed in successfully!",
-            { classname: 'bg-success text-light' }
-          );
           this.loading = false;
           this.router.navigateByUrl('/dashboard');
         },
-        () => {
+        (ex) => {
+          this.loading = false;
           this.toaster.show(
-            "Invalid email or password.",
+            ex.error.error,
             { classname: 'bg-danger text-light' }
           );
-          this.loading = false;
         }
       );
+  }
+
+  async forgotPassword() {
+
+    const emailInputEl = document.querySelector('[id^="signInEmail"]') as HTMLInputElement;
+    
+    if (!this.signInEmailCtrl.value) {
+      emailInputEl!.focus();
+      this.toaster.show(
+        `Type your email in the highlighted field and then click on "I've forgot my password" once again.`,
+        { classname: 'bg-info text-light' }
+      );
+    }
+    else if (this.signInEmailCtrl.invalid) {
+      this.toaster.show(
+        "Invalid email address",
+        { classname: 'bg-danger text-light' }
+      );
+    }
+
+    const modalRef = this.modalService.open(ResetPasswordDialog, { centered: true });
+    await modalRef.result;
   }
 }
