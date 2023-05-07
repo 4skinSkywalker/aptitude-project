@@ -16,6 +16,11 @@ const routes: Routes = [
       import("./pages/confirm-email/confirm-email.component").then(c => c.ConfirmEmailComponent)
   },
   {
+    path: "reset-password",
+    loadComponent: () =>
+      import("./pages/reset-password/reset-password.component").then(c => c.ResetPasswordComponent)
+  },
+  {
     path: "dashboard",
     loadChildren: () => import("./dashboard/dashboard.module").then(m => m.DashboardModule),
     canActivate: ["viewerGuard"]

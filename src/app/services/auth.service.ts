@@ -27,6 +27,7 @@ export class AuthService {
     private http: HttpClient
   ) {
     this.autoSignIn();
+    console.log("user$:", (window as any)["user$"] = this.user$);
   }
 
   signUp(username: string, email: string, password: string) {

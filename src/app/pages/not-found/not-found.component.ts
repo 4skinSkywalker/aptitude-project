@@ -23,8 +23,11 @@ import { SharedModule } from "src/app/shared/shared.module";
     >
         <div class="card shadow-lg" style="background: #0000; backdrop-filter: blur(10px);">
             <div class="card-body p-5 text-white">
+
                 <h1 class="display-6">Page not found</h1>
+
                 <p class="lead">If you think there's a problem, then notify to the webmasters. Thanks</p>
+                
                 <a class="text-reset" routerLink="/home">Go to home</a>
             </div>
         </div>
