@@ -5,7 +5,6 @@ import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { AuthService } from 'src/app/services/auth.service';
 import { ToastService } from 'src/app/services/toast.service';
 import { EmailConfirmationDialogComponent } from './dialogs/email-confirmation-dialog.component';
-import { ResetPasswordDialogComponent } from './dialogs/reset-password-dialogs.component';
 
 @Component({
   selector: 'app-login',
@@ -62,7 +61,10 @@ export class LoginComponent {
       .subscribe(
         async () => {
           this.loading = false;
-          const modalRef = this.modalService.open(EmailConfirmationDialogComponent, { centered: true });
+          const modalRef = this.modalService.open(
+            EmailConfirmationDialogComponent,
+            { centered: true }
+          );
           await modalRef.result;
         },
         (ex) => {
@@ -100,24 +102,6 @@ export class LoginComponent {
   }
 
   async forgotPassword() {
-
-    const emailInputEl = document.querySelector('[id^="signInEmail"]') as HTMLInputElement;
-    
-    if (!this.signInEmailCtrl.value) {
-      emailInputEl!.focus();
-      this.toaster.show(
-        `Type your email in the highlighted field and then click on "I've forgot my password" once again.`,
-        { classname: 'bg-info text-light' }
-      );
-    }
-    else if (this.signInEmailCtrl.invalid) {
-      this.toaster.show(
-        "Invalid email address",
-        { classname: 'bg-danger text-light' }
-      );
-    }
-
-    const modalRef = this.modalService.open(ResetPasswordDialogComponent, { centered: true });
-    await modalRef.result;
+    this.router.navigateByUrl("/reset-password");
   }
 }

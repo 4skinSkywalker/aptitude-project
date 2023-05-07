@@ -2,9 +2,11 @@ import { CommonModule } from "@angular/common";
 import { Component } from "@angular/core";
 import { FormControl, FormGroup, Validators } from "@angular/forms";
 import { ActivatedRoute, Router } from "@angular/router";
+import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { AuthService } from "src/app/services/auth.service";
 import { ToastService } from "src/app/services/toast.service";
 import { SharedModule } from "src/app/shared/shared.module";
+import { ResetPasswordDialogComponent } from "./dialogs/reset-password-dialog.component";
 
 @Component({
   standalone: true,
@@ -163,6 +165,7 @@ export class ResetPasswordComponent {
     private route: ActivatedRoute,
     private router: Router,
     private authService: AuthService,
+    private modalService: NgbModal,
     private toaster: ToastService
   ) {
     this.resetCode = route.snapshot.queryParams["reset-code"];
@@ -181,9 +184,11 @@ export class ResetPasswordComponent {
 
           this.loading = false;
 
-          this.toaster.show(
-            "An email to was sent to your email address!",
-            { classname: 'bg-success text-light' }
+          this.phase1Form.reset();
+
+          this.modalService.open(
+            ResetPasswordDialogComponent,
+            { centered: true }
           );
         },
         (ex) => {
