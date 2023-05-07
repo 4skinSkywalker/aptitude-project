@@ -31,40 +31,34 @@ export class AuthService {
 
   signUp(username: string, email: string, password: string) {
 
+    const url = `${environment.apiRoot}/auth/sign-up`;
     const body = {
-      action: "sign-up",
-      payload: {
-        username,
-        email,
-        password
-      }
+      username,
+      email,
+      password
     };
 
-    return this.http.post<BasicResponse<string>>(environment.apiRoot, body);
+    return this.http.post<BasicResponse<string>>(url, body);
   }
 
   confirmEmail(_id: string) {
 
-    const body = {
-      action: "confirm-email",
-      payload: { _id }
-    };
+    const url = `${environment.apiRoot}/auth/confirm-email`;
+    const body = { _id };
 
-    return this.http.post<BasicResponse<string>>(environment.apiRoot, body);
+    return this.http.post<BasicResponse<string>>(url, body);
   }
 
   signIn(email: string, password: string) {
 
+    const url = `${environment.apiRoot}/auth/sign-in`;
     const body = {
-      action: "sign-in",
-      payload: {
-        email,
-        password
-      }
+      email,
+      password
     };
 
     return this.http
-      .post<BasicResponse<string>>(environment.apiRoot, body)
+      .post<BasicResponse<string>>(url, body)
       .pipe(
         map(response => {
           const { result } = response;
@@ -77,23 +71,22 @@ export class AuthService {
   }
 
   resetPasswordPhase1(email: string) {
-    const body = {
-      action: "reset-password-phase-1",
-      payload: { email }
-    };
-    return this.http.post<BasicResponse<string>>(environment.apiRoot, body);
+
+    const url = `${environment.apiRoot}/auth/reset-password-phase-1`;
+    const body = { email };
+
+    return this.http.post<BasicResponse<string>>(url, body);
   }
 
   resetPasswordPhase2(email: string, resetCode: string, password: string) {
+
+    const url = `${environment.apiRoot}/auth/reset-password-phase-2`;
     const body = {
-      action: "reset-password-phase-2",
-      payload: {
-        email,
-        resetCode,
-        password
-      }
+      email,
+      resetCode,
+      password
     };
-    return this.http.post<BasicResponse<string>>(environment.apiRoot, body);
+    return this.http.post<BasicResponse<string>>(url, body);
   }
 
   autoSignIn() {
