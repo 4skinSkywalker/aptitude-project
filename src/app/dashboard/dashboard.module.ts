@@ -11,7 +11,12 @@ const routes: Routes = [
     path: '',
     component: DashboardComponent,
     children: [
-      { path: '', redirectTo: 'kitchen-sink', pathMatch: 'full' },
+      { path: '', redirectTo: 'practice', pathMatch: 'full' },
+      {
+        path: 'practice',
+        loadChildren: () =>
+          import('./features/practice/practice.module').then(m => m.PracticeModule)
+      },
       {
         path: 'kitchen-sink',
         loadChildren: () =>

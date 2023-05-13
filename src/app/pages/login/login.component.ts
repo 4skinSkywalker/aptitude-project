@@ -19,10 +19,10 @@ export class LoginComponent {
 
   signUpUsernameCtrl = new FormControl<string>("", [Validators.required, Validators.minLength(3)])
   signUpEmailCtrl = new FormControl<string>("federicotrotta92@gmail.com", this.emailValidators);
-  signUpPasswordCtrl = new FormControl<string>("questa è una prova", [Validators.required]);
+  signUpPasswordCtrl = new FormControl<string>("qwertyuiop", [Validators.required]);
 
   signInEmailCtrl = new FormControl<string>("federicotrotta92@gmail.com", this.emailValidators);
-  signInPasswordCtrl = new FormControl<string>("questa è una prova", [Validators.required]);
+  signInPasswordCtrl = new FormControl<string>("qwertyuiop", [Validators.required]);
 
   signUpForm!: FormGroup;
   signInForm!: FormGroup;

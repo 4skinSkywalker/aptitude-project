@@ -39,7 +39,7 @@
 .sb-sublinks:is(.collapsing, .show) {
     display: grid;
     gap: 0.5rem;
-    margin-top: 0.5rem;
+    margin-top: 0.55rem;
     padding-left: 0.75rem;
 }
 
