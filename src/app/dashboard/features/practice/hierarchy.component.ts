@@ -8,6 +8,7 @@ import { SharedModule } from "src/app/shared/shared.module";
     standalone: true,
     imports: [CommonModule, RouterModule, SharedModule],
     template: `
+        <app-breadcrumb-router></app-breadcrumb-router>
         <div class="cat-grid">
             <div class="cat-grid__item animated" *ngFor="let link of links">
                 <a class="stretched-link text-decoration-none text-reset" [routerLink]="link.path">{{ link.title }}</a>
