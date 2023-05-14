@@ -1,14 +1,41 @@
 import { CommonModule } from "@angular/common";
-import { Component } from "@angular/core";
-import { ActivatedRoute, Router, RouterModule } from "@angular/router";
-import { filter, map, tap } from "rxjs";
+import { Component, OnDestroy, OnInit } from "@angular/core";
+import { ActivatedRoute, Route, Router, RouterModule } from "@angular/router";
+import { Subject, filter, map, takeUntil, tap } from "rxjs";
 import { SharedModule } from "src/app/shared/shared.module";
+import { routes } from "./practice.module";
+import { FormControl } from "@angular/forms";
+import { jsonCopy } from "src/app/utils/json";
 
 @Component({
     standalone: true,
     imports: [CommonModule, RouterModule, SharedModule],
     template: `
         <app-breadcrumb-router></app-breadcrumb-router>
+
+        <div class="px-3" style="max-width: 40ch; margin: 0 auto;">
+            <app-input
+                type="autocomplete"
+                name="hierarchy"
+                placeholder="Search 🔍︎"
+                [limit]="25"
+                [options]="filteredRoutes"
+                [formatter]="searchFormatter"
+                [template]="searchTmpl"
+                [ngControl]="searchCtrl"
+            ></app-input>
+            <ng-template #searchTmpl let-r="result" let-t="term">
+                <div class="py-2" style="white-space: break-spaces">
+                    <h6 class="text-uppercase">{{ r.text }}</h6>
+                    <ngb-highlight
+                        style="display: block; font-size: 0.8rem; line-height: 1;"
+                        [result]="r.path"
+                        [term]="t"
+                    ></ngb-highlight>
+                </div>
+            </ng-template>
+        </div>
+
         <div class="cat-grid">
             <div class="cat-grid__item animated" *ngFor="let link of links">
                 <a
@@ -143,21 +170,66 @@ import { SharedModule } from "src/app/shared/shared.module";
         }
     `]
 })
-export class HierarchyComponent {
+export class HierarchyComponent implements OnInit, OnDestroy {
 
     links: { path: string, title: any }[] = [];
+
+    searchCtrl = new FormControl();
+    searchFormatter = (route: Route) => route.path;
+    routes = routes;
+    filteredRoutes: Route[] = [];
+
+    destroy$ = new Subject<void>();
 
     constructor(
         private router: Router,
         private route: ActivatedRoute
-    ) {
+    ) { }
+
+    ngOnInit() {
+
         this.route
             .data
             .pipe(
+                takeUntil(this.destroy$),
                 filter(data => !data.leaf),
                 map(data => Object.values(data.children)),
                 tap((links: any) => this.links = links),
             )
             .subscribe();
+
+        this.route
+            .url
+            .pipe(
+                takeUntil(this.destroy$),
+                tap(segments => {
+                    const segment = segments.join("/");
+                    // console.log("Segment", segment);
+                    const copyOfRoutes = jsonCopy(routes) as any[];
+                    this.filteredRoutes = copyOfRoutes.filter(r => r.path?.includes(segment));
+                    this.filteredRoutes.shift();
+                    this.filteredRoutes.forEach((r: any) =>
+                        r.text = r.data.mongoPath?.split(",").slice(-2)[0]
+                    );
+                    // console.log("Filtered routes", this.filteredRoutes);
+                })
+            )
+            .subscribe();
+
+        this.searchCtrl
+            .valueChanges
+            .pipe(
+                takeUntil(this.destroy$),
+                filter(route => !!route),
+                tap(route => {
+                    // console.log("Selected route", route);
+                    this.router.navigateByUrl("dashboard/practice/" + route.path);
+                })
+            )
+            .subscribe();
+    }
+
+    ngOnDestroy() {
+        this.destroy$.next();
     }
 }

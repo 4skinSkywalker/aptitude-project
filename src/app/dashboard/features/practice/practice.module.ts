@@ -45,8 +45,11 @@ const compileParent = (parentRoute: Route, childItem: any) => {
 
 function recur(children: any, parentRoute: Route, leafCb: Function) {
     for (const child of children) {
+
         const childRoute = compileParent(parentRoute, child);
+
         let hasChildren = false;
+
         for (const key in child) {
             const val = child[key];
             if (Array.isArray(val)) {
@@ -54,6 +57,7 @@ function recur(children: any, parentRoute: Route, leafCb: Function) {
                 recur(val, childRoute, leafCb);
             }
         }
+
         if (!hasChildren) {
             leafCb(childRoute);
         }

@@ -18,11 +18,13 @@ export class TableComponent {
 
   @Input("thead") thead!: TemplateRef<any>;
 	@Input("tbody") tbody!: TemplateRef<any>;
+  @Input("animated") animated = false;
   @Input("rowExpand") rowExpand!: TemplateRef<any>;
   @Input("tfoot") tfoot!: TemplateRef<any>;
   @Input("items") items!: any[];
   @Input("trackByFn") trackByFn = (index: number, item: any): any => item;
-  @Input("emptyMessage") emptyMessage: string | boolean = "No results to display";
+  @Input("emptyTemplate") emptyTemplate?: TemplateRef<any>;
+  @Input("emptyMessage") emptyMessage: string = "No results to display";
   @Input("stickyHead") stickyHead = false;
   @Input("maxHeight") maxHeight: string | boolean = false; 
 
@@ -41,7 +43,7 @@ export class TableComponent {
 
   @Input("searchable") searchable: string[] | boolean = false;
   searchInput = new FormControl('', { nonNullable: true });
-  lastTerm = '';
+  lastTerm$ = new BehaviorSubject('');
   filteredItems: any[] = [];
 
   @Output("rowSelected") rowSelected = new EventEmitter<any>();
@@ -78,9 +80,9 @@ export class TableComponent {
     this.searchInput.valueChanges
       .pipe(
         takeUntil(this.destroy$),
-        startWith(this.lastTerm),
+        startWith(this.lastTerm$.getValue()),
         tap(term => {
-          this.lastTerm = term;
+          this.lastTerm$.next(term);
           this.search();
         }),
       )
@@ -110,15 +112,16 @@ export class TableComponent {
 
     this.filteredItems = this.items.filter(item => {
 
-      const term = this.lastTerm.toLocaleLowerCase();
+      const term = this.lastTerm$.getValue().toLowerCase();
 
       if (this.searchable && Array.isArray(this.searchable) && this.searchable.length)
-        return this.searchable.some(path =>
-          (resolve(path, item) || '').toLocaleLowerCase().includes(term)
-        );
+        return this.searchable.some(path => {
+          const resolved = resolve(path, item) || '';
+          return (resolved + '').toLowerCase().includes(term)
+        });
 
       // Global hacky search
-      const serialized = JSON.stringify(item).toLocaleLowerCase();
+      const serialized = JSON.stringify(item).toLowerCase();
       return serialized.includes(term);
     });
 
