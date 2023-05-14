@@ -11,7 +11,12 @@ import { SharedModule } from "src/app/shared/shared.module";
         <app-breadcrumb-router></app-breadcrumb-router>
         <div class="cat-grid">
             <div class="cat-grid__item animated" *ngFor="let link of links">
-                <a class="stretched-link text-decoration-none text-reset" [routerLink]="link.path">{{ link.title }}</a>
+                <a
+                    class="stretched-link text-decoration-none text-reset"
+                    [routerLink]="link.path"
+                >
+                    {{ link.title.original }}
+                </a>
             </div>
         </div>
     `,
@@ -32,6 +37,7 @@ import { SharedModule } from "src/app/shared/shared.module";
             box-shadow: 0 0 10px #0002;
             padding: 1em;
             font-size: 1rem;
+            line-height: 1.2;
             display: grid;
             place-items: center;
             text-align: center;
@@ -139,7 +145,7 @@ import { SharedModule } from "src/app/shared/shared.module";
 })
 export class HierarchyComponent {
 
-    links: { path: string, title: string }[] = [];
+    links: { path: string, title: any }[] = [];
 
     constructor(
         private router: Router,
@@ -148,10 +154,7 @@ export class HierarchyComponent {
         this.route
             .data
             .pipe(
-                filter(data => {
-                    console.log(data);
-                    return !data.leaf;
-                }),
+                filter(data => !data.leaf),
                 map(data => Object.values(data.children)),
                 tap((links: any) => this.links = links),
             )

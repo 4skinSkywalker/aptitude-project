@@ -5,8 +5,6 @@ import { SharedModule } from 'src/app/shared/shared.module';
 import { groups } from './mocks/groups';
 import { HierarchyComponent } from './hierarchy.component';
 
-const title2url = (title: string) => encodeURI(title.replaceAll(" ", "-").toLowerCase());
-
 const rootRoute = {
     path: "",
     component: HierarchyComponent,
@@ -22,7 +20,7 @@ export const routes: Routes = [
 
 const compileParent = (parentRoute: Route, childItem: any) => {
 
-    const childUrl = title2url(childItem.title);
+    const childUrl = childItem.title.escaped;
 
     const isParentRoot = parentRoute.path === "";
 
@@ -30,7 +28,7 @@ const compileParent = (parentRoute: Route, childItem: any) => {
         path: `${parentRoute.path}${!isParentRoot ? "/" : ""}${childUrl}`,
         component: HierarchyComponent,
         data: {
-            mongoPath: parentRoute.data!.mongoPath + childItem.title + ",",
+            mongoPath: parentRoute.data!.mongoPath + childItem.title.original + ",",
             children: []
         }
     };
@@ -45,15 +43,20 @@ const compileParent = (parentRoute: Route, childItem: any) => {
     return childRoute;
 };
 
-function recur(children: any, parentRoute: any, leafCb: Function) {
-
-    if (!children) {
-        return leafCb(parentRoute);
-    }
-
+function recur(children: any, parentRoute: Route, leafCb: Function) {
     for (const child of children) {
         const childRoute = compileParent(parentRoute, child);
-        recur(child.children, childRoute, leafCb);
+        let hasChildren = false;
+        for (const key in child) {
+            const val = child[key];
+            if (Array.isArray(val)) {
+                hasChildren = true;
+                recur(val, childRoute, leafCb);
+            }
+        }
+        if (!hasChildren) {
+            leafCb(childRoute);
+        }
     }
 }
 
