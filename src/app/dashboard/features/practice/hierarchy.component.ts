@@ -42,7 +42,7 @@ import { jsonCopy } from "src/app/utils/json";
                     class="stretched-link text-decoration-none text-reset"
                     [routerLink]="link.path"
                 >
-                    {{ link.title.original }}
+                    {{ link.title.custom }}
                 </a>
             </div>
         </div>
