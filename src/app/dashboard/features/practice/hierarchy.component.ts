@@ -44,6 +44,7 @@ import { jsonCopy } from "src/app/utils/json";
                 >
                     {{ link.title.custom }}
                 </a>
+                <small class="text-muted">0 / {{ link.questions }} questions</small>
             </div>
         </div>
     `,
@@ -170,7 +171,7 @@ import { jsonCopy } from "src/app/utils/json";
 })
 export class HierarchyComponent implements OnInit, OnDestroy {
 
-    links: { path: string, title: any }[] = [];
+    links: { path: string, title: any, questions: number }[] = [];
 
     searchCtrl = new FormControl();
     searchFormatter = (route: Route) => route.path;

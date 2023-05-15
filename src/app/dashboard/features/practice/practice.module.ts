@@ -37,7 +37,8 @@ const compileParent = (parentRoute: Route, childItem: any) => {
 
     parentRoute.data!.children.push({
         path: childUrl,
-        title: childItem.title
+        title: childItem.title,
+        questions: childItem.questions
     });
 
     return childRoute;
