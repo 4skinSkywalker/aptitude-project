@@ -193,7 +193,7 @@ export class HierarchyComponent implements OnInit, OnDestroy {
                 takeUntil(this.destroy$),
                 filter(data => !data.leaf),
                 map(data => Object.values(data.children)),
-                tap((links: any) => this.links = links),
+                tap((links: any) => this.links = links)
             )
             .subscribe();
 

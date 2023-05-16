@@ -17,6 +17,7 @@ import { AppSortableHeader } from './directives/sortable-header';
 import { RbacAllowDirective } from './directives/role-based-access-allow';
 import { LetDirective } from './directives/ng-let';
 import { MonthpickerComponent } from './components/monthpicker/monthpicker.component';
+import { HtmlDecodePipe } from './pipes/html-decode.pipe';
 
 
 
@@ -31,7 +32,8 @@ import { MonthpickerComponent } from './components/monthpicker/monthpicker.compo
     SearchRouterComponent,
     TableComponent,
     LetDirective,
-    MonthpickerComponent
+    MonthpickerComponent,
+    HtmlDecodePipe
   ],
   imports: [
     CommonModule,
@@ -62,7 +64,8 @@ import { MonthpickerComponent } from './components/monthpicker/monthpicker.compo
     AppSortableHeader,
     RbacAllowDirective,
     LetDirective,
-    MonthpickerComponent
+    MonthpickerComponent,
+    HtmlDecodePipe
   ]
 })
 export class SharedModule { }

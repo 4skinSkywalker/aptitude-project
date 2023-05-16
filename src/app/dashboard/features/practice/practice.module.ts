@@ -2,8 +2,10 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Route, RouterModule, Routes } from '@angular/router';
 import { SharedModule } from 'src/app/shared/shared.module';
-import { groups } from './mocks/groups';
+import { groups } from './data/groups';
 import { HierarchyComponent } from './hierarchy.component';
+import { LevelComponent } from './level.component';
+import { HtmlDecodePipe } from '../../../shared/pipes/html-decode.pipe';
 
 const rootRoute = {
     path: "",
@@ -67,13 +69,13 @@ function recur(children: any, parentRoute: Route, leafCb: Function) {
 
 console.time("Creating routes");
 recur(groups, rootRoute, (leaf: any) => {
-    leaf.component = HierarchyComponent,
+    leaf.component = LevelComponent,
     leaf.data = { ...leaf.data, leaf: true }; 
 });
 console.timeEnd("Creating routes");
 
 @NgModule({
-  declarations: [],
+  declarations: [ ],
   imports: [
     CommonModule,
     RouterModule.forChild(routes),
