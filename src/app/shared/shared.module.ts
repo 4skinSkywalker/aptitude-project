@@ -18,6 +18,7 @@ import { RbacAllowDirective } from './directives/role-based-access-allow';
 import { LetDirective } from './directives/ng-let';
 import { MonthpickerComponent } from './components/monthpicker/monthpicker.component';
 import { HtmlDecodePipe } from './pipes/html-decode.pipe';
+import { MathJaxDirective } from './directives/math-jax';
 
 
 
@@ -33,7 +34,8 @@ import { HtmlDecodePipe } from './pipes/html-decode.pipe';
     TableComponent,
     LetDirective,
     MonthpickerComponent,
-    HtmlDecodePipe
+    HtmlDecodePipe,
+    MathJaxDirective
   ],
   imports: [
     CommonModule,
@@ -65,7 +67,8 @@ import { HtmlDecodePipe } from './pipes/html-decode.pipe';
     RbacAllowDirective,
     LetDirective,
     MonthpickerComponent,
-    HtmlDecodePipe
+    HtmlDecodePipe,
+    MathJaxDirective
   ]
 })
 export class SharedModule { }

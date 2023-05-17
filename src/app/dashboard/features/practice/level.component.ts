@@ -37,13 +37,13 @@ import { PracticeService } from "./services/practice.service";
 
                 <div class="mb-4">
                     <h2>Question</h2>
-                    <span [innerHTML]="questions[currQuestionIndex]?.question | htmlDecode"></span>
+                    <span [MathJax]="questions[currQuestionIndex]?.question | htmlDecode | htmlDecode"></span>
                 </div>
 
                 <div>
                     <h2>Options</h2>
                     <div *ngFor="let opt of questions[currQuestionIndex]?.options">
-                        <span [innerHTML]="opt.value | htmlDecode"></span>
+                        <span [MathJax]="opt.value | htmlDecode | htmlDecode"></span>
                     </div>
                 </div>
             </div>
