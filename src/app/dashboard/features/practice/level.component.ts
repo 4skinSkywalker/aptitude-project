@@ -30,7 +30,7 @@ import { PracticeService } from "./services/practice.service";
                 style="flex: 9999 1 600px; padding: 1rem;"
             >
                 <h2>Comprehension</h2>
-                <span [innerHTML]="questions[currQuestionIndex]?.comprehension | htmlDecode"></span>
+                <span [MathJax]="questions[currQuestionIndex]?.comprehension | htmlDecode | htmlDecode"></span>
             </div>
 
             <div style="flex: 1 1 400px; padding: 1rem;" >
