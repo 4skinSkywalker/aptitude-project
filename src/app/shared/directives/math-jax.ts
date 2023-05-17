@@ -44,6 +44,7 @@ export class MathJaxDirective {
     processExpression() {
         this.el.nativeElement.innerHTML = this.exp;
         const hub = this.mathJaxInstance.Hub;
+        hub.processSectionDelay = 0;
         hub.Queue([ "Typeset", hub, this.el.nativeElement ]);
     }
 
