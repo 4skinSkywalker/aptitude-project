@@ -55,7 +55,7 @@ body {
 
 ngb-typeahead-window {
   width: clamp(25ch, 100%, 40ch);
-  max-height: 300px;
+  max-height: 50vh;
   overflow: auto;
 }
 

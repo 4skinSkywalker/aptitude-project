@@ -63,9 +63,9 @@ import { QuestionComponent } from "./question.component";
             gap: 0.5rem;
             flex-wrap: wrap;
             justify-content: center;
-            padding: 1rem;
+            padding: 0 1rem;
             max-width: 640px;
-            margin: min(3vh, 3rem) auto;
+            margin: 0 auto 1rem;
         }
 
         .q-step {

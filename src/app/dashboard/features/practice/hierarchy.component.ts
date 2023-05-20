@@ -17,7 +17,8 @@ import { jsonCopy } from "src/app/utils/json";
             <app-input
                 type="autocomplete"
                 name="hierarchy"
-                placeholder="Search 🔍︎"
+                placeholder="Search into subcategories 🔍︎"
+                helper="The search applies to the current path and below"
                 [limit]="25"
                 [options]="filteredRoutes"
                 [formatter]="searchFormatter"
@@ -55,7 +56,7 @@ import { jsonCopy } from "src/app/utils/json";
             gap: 1rem;
             max-width: 1200px;
             margin: 0 auto;
-            padding: min(10vh, 10rem) 1rem;
+            padding: min(5vh, 5rem) 1rem;
         }
 
         .cat-grid__item {
