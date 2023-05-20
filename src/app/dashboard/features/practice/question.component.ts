@@ -59,7 +59,7 @@ import { DifficultyIndicatorComponent } from "./difficulty-indicator.component";
                         <span [MathJax]="question.question | htmlDecode | htmlDecode"></span>
                     </div>
 
-                    <div>
+                    <div *ngIf="question.options.length">
 
                         <h2>Options</h2>
                         
