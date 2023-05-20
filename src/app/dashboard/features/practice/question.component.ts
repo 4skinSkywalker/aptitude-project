@@ -9,76 +9,74 @@ import { Question } from "./models/question";
     selector: "app-question",
     imports: [ CommonModule, RouterModule, SharedModule ],
     template: `
-        <div *ngIf="question" class="question-wrap">
     
-            <button
-                class="btn ms-3"
-                [class.btn-outline-primary]="!showSolution"
-                [class.btn-primary]="showSolution"
-                (click)="showSolution = !showSolution"
+        <button
+            class="btn ms-3"
+            [class.btn-outline-primary]="!showSolution"
+            [class.btn-primary]="showSolution"
+            (click)="showSolution = !showSolution"
+        >
+            <i class="bi bi-info-circle-fill"></i> {{ showSolution ? "Hide" : "Show" }} solution
+        </button>
+
+        <div class="d-flex flex-wrap">
+
+            <div
+                *ngIf="question.comprehension || showSolution"
+                style="flex: 9999 1; padding: 1rem;"
             >
-                <i class="bi bi-info-circle-fill"></i> {{ showSolution ? "Hide" : "Show" }} solution
-            </button>
 
-            <div class="d-flex flex-wrap">
+                <div *ngIf="question.comprehension" class="mb-4">
 
-                <div
-                    *ngIf="question.comprehension || showSolution"
-                    style="flex: 9999 1; padding: 1rem;"
-                >
+                    <h2>Comprehension</h2>
 
-                    <div *ngIf="question.comprehension" class="mb-4">
-
-                        <h2>Comprehension</h2>
-
-                        <span [MathJax]="question.comprehension | htmlDecode | htmlDecode"></span>
-                    </div>
-
-                    <div *ngIf="showSolution" class="mb-4">
-
-                        <h2>Solution</h2>
-
-                        <span [MathJax]="question.solution[0] | htmlDecode | htmlDecode"></span>
-                    </div>
+                    <span [MathJax]="question.comprehension | htmlDecode | htmlDecode"></span>
                 </div>
 
-                <div style="flex: 1 1 400px; padding: 1rem;" >
+                <div *ngIf="showSolution" class="mb-4">
 
-                    <div class="mb-4">
+                    <h2>Solution</h2>
 
-                        <h2>Question</h2>
+                    <span [MathJax]="question.solution[0] | htmlDecode | htmlDecode"></span>
+                </div>
+            </div>
 
-                        <span [MathJax]="question.question | htmlDecode | htmlDecode"></span>
-                    </div>
+            <div style="flex: 1 1 400px; padding: 1rem;" >
 
-                    <div>
+                <div class="mb-4">
 
-                        <h2>Options</h2>
-                        
-                        <div
-                            *ngFor="let opt of question.options"
-                            class="option-wrap"
-                            (click)="radio.checked = true"
-                        >
-                            <div class="form-check">
-                                <input
-                                    #radio
-                                    class="form-check-input"
-                                    type="radio"
-                                    [name]="'question-' + question._id"
-                                    [id]="'option-' + opt._id"
-                                    [checked]="opt.prompt === userAnswer"
-                                    (change)="onInputChange(radio)"
-                                >
-                                <label
-                                    class="form-check-label"
-                                    [class.right-option]="radio.checked && opt.prompt === question.correctOption"
-                                    [class.wrong-option]="radio.checked && opt.prompt !== question.correctOption"
-                                    [for]="'option-' + opt._id"
-                                >
-                                    <span [MathJax]="opt.value | htmlDecode | htmlDecode"></span>
-                                </label>
-                            </div>
+                    <h2>Question</h2>
+
+                    <span [MathJax]="question.question | htmlDecode | htmlDecode"></span>
+                </div>
+
+                <div>
+
+                    <h2>Options</h2>
+                    
+                    <div
+                        *ngFor="let opt of question.options"
+                        class="option-wrap"
+                        (click)="radio.checked = true"
+                    >
+                        <div class="form-check">
+                            <input
+                                #radio
+                                class="form-check-input"
+                                type="radio"
+                                [name]="'question-' + question._id"
+                                [id]="'option-' + opt._id"
+                                [checked]="opt.prompt === userAnswer"
+                                (change)="onInputChange(radio)"
+                            >
+                            <label
+                                class="form-check-label"
+                                [class.right-option]="radio.checked && opt.prompt === question.correctOption"
+                                [class.wrong-option]="radio.checked && opt.prompt !== question.correctOption"
+                                [for]="'option-' + opt._id"
+                            >
+                                <span [MathJax]="opt.value | htmlDecode | htmlDecode"></span>
+                            </label>
                         </div>
                     </div>
                 </div>
@@ -86,12 +84,6 @@ import { Question } from "./models/question";
         </div>
     `,
     styles: [`
-
-        .question-wrap {
-            max-width: 1000px;
-            margin: 0 auto;
-            margin-bottom: 5rem;
-        }
 
         .option-wrap {
             border-radius: 0.5rem;

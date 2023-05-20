@@ -24,9 +24,39 @@ import { QuestionComponent } from "./question.component";
             </div>
         </div>
 
-        <app-question [question]="questions[currQuestionIndex]"></app-question>
+        <div class="question-wrap">
+
+            <div class="d-flex justify-content-between mb-3">
+
+                <button
+                    class="btn text-uppercase"
+                    [disabled]="currQuestionIndex === 0"
+                    (click)="previousQuestion()"    
+                >
+                    <i class="bi bi-arrow-left-circle-fill"></i> prev
+                </button>
+
+                <button
+                    class="btn text-uppercase"
+                    [disabled]="currQuestionIndex === questions.length - 1"
+                    (click)="nextQuestion()"    
+                >
+                    next <i class="bi bi-arrow-right-circle-fill"></i>
+                </button>
+            </div>
+    
+            <div *ngIf="questions[currQuestionIndex] as question">
+                <app-question [question]="question"></app-question>
+            </div>
+        </div>
     `,
     styles: [`
+
+        .question-wrap {
+            max-width: 1000px;
+            margin: 0 auto;
+            margin-bottom: 5rem;
+        }
 
         .q-steps {
             display: flex;
@@ -94,5 +124,13 @@ export class LevelComponent implements OnInit, OnDestroy {
 
     ngOnDestroy() {
         this.destroy$.next();
+    }
+
+    previousQuestion() {
+        this.currQuestionIndex = Math.max(this.currQuestionIndex - 1, 0);
+    }
+
+    nextQuestion() {
+        this.currQuestionIndex = Math.min(this.currQuestionIndex + 1, this.questions.length - 1);
     }
 }
