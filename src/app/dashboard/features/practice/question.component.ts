@@ -34,18 +34,18 @@ import { DifficultyIndicatorComponent } from "./difficulty-indicator.component";
                 style="flex: 9999 1; padding: 1rem;"
             >
 
-                <div *ngIf="question.comprehension" class="mb-4">
-
-                    <h2>Comprehension</h2>
-
-                    <span [MathJax]="question.comprehension | htmlDecode | htmlDecode"></span>
-                </div>
-
                 <div *ngIf="showSolution" class="mb-4">
 
                     <h2>Solution</h2>
 
                     <span [MathJax]="question.solution[0] | htmlDecode | htmlDecode"></span>
+                </div>
+
+                <div *ngIf="question.comprehension" class="mb-4">
+
+                    <h2>Comprehension</h2>
+
+                    <span [MathJax]="question.comprehension | htmlDecode | htmlDecode"></span>
                 </div>
             </div>
 
