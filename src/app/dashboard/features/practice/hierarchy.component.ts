@@ -9,7 +9,7 @@ import { jsonCopy } from "src/app/utils/json";
 
 @Component({
     standalone: true,
-    imports: [CommonModule, RouterModule, SharedModule],
+    imports: [ CommonModule, RouterModule, SharedModule ],
     template: `
         <app-breadcrumb-router></app-breadcrumb-router>
 

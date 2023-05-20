@@ -1,23 +1,31 @@
 import { CommonModule } from "@angular/common";
 import { Component, Input, OnChanges, OnInit, SimpleChanges } from "@angular/core";
-import { RouterModule } from "@angular/router";
 import { SharedModule } from "src/app/shared/shared.module";
 import { Question } from "./models/question";
+import { DifficultyIndicatorComponent } from "./difficulty-indicator.component";
 
 @Component({
     standalone: true,
     selector: "app-question",
-    imports: [ CommonModule, RouterModule, SharedModule ],
+    imports: [ CommonModule, SharedModule, DifficultyIndicatorComponent ],
     template: `
-    
-        <button
-            class="btn ms-3"
-            [class.btn-outline-primary]="!showSolution"
-            [class.btn-primary]="showSolution"
-            (click)="showSolution = !showSolution"
-        >
-            <i class="bi bi-info-circle-fill"></i> {{ showSolution ? "Hide" : "Show" }} solution
-        </button>
+
+        <div class="d-flex gap-3 align-items-end px-3">
+
+            <app-difficulty-indicator
+                [difficulty]="question.difficultyStats.difficulty"
+                [difficultyValue]="question.difficultyStats.difficultyValue"
+            ></app-difficulty-indicator>
+
+            <button
+                class="btn"
+                [class.btn-outline-primary]="!showSolution"
+                [class.btn-primary]="showSolution"
+                (click)="showSolution = !showSolution"
+            >
+                <i class="bi bi-info-circle-fill"></i> {{ showSolution ? "Hide" : "Show" }} solution
+            </button>
+        </div>
 
         <div class="d-flex flex-wrap">
 
