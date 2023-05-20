@@ -49,42 +49,44 @@ import { DifficultyIndicatorComponent } from "./difficulty-indicator.component";
                 </div>
             </div>
 
-            <div style="flex: 1 1 400px; padding: 1rem;" >
+            <div style="flex: 1 1 400px; padding: 1rem;">
+                <div class="position-sticky" style="top: 1rem">
+            
+                    <div class="mb-4">
 
-                <div class="mb-4">
+                        <h2>Question</h2>
 
-                    <h2>Question</h2>
+                        <span [MathJax]="question.question | htmlDecode | htmlDecode"></span>
+                    </div>
 
-                    <span [MathJax]="question.question | htmlDecode | htmlDecode"></span>
-                </div>
+                    <div>
 
-                <div>
-
-                    <h2>Options</h2>
-                    
-                    <div
-                        *ngFor="let opt of question.options"
-                        class="option-wrap"
-                        (click)="radio.checked = true"
-                    >
-                        <div class="form-check">
-                            <input
-                                #radio
-                                class="form-check-input"
-                                type="radio"
-                                [name]="'question-' + question._id"
-                                [id]="'option-' + opt._id"
-                                [checked]="opt.prompt === userAnswer"
-                                (change)="onInputChange(radio)"
-                            >
-                            <label
-                                class="form-check-label"
-                                [class.right-option]="radio.checked && opt.prompt === question.correctOption"
-                                [class.wrong-option]="radio.checked && opt.prompt !== question.correctOption"
-                                [for]="'option-' + opt._id"
-                            >
-                                <span [MathJax]="opt.value | htmlDecode | htmlDecode"></span>
-                            </label>
+                        <h2>Options</h2>
+                        
+                        <div
+                            *ngFor="let opt of question.options"
+                            class="option-wrap"
+                            (click)="radio.checked = true"
+                        >
+                            <div class="form-check">
+                                <input
+                                    #radio
+                                    class="form-check-input"
+                                    type="radio"
+                                    [name]="'question-' + question._id"
+                                    [id]="'option-' + opt._id"
+                                    [checked]="opt.prompt === userAnswer"
+                                    (change)="onInputChange(radio)"
+                                >
+                                <label
+                                    class="form-check-label"
+                                    [class.right-option]="radio.checked && opt.prompt === question.correctOption"
+                                    [class.wrong-option]="radio.checked && opt.prompt !== question.correctOption"
+                                    [for]="'option-' + opt._id"
+                                >
+                                    <span [MathJax]="opt.value | htmlDecode | htmlDecode"></span>
+                                </label>
+                            </div>
                         </div>
                     </div>
                 </div>
