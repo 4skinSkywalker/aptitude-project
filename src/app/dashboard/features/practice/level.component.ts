@@ -4,10 +4,12 @@ import { ActivatedRoute, RouterModule } from "@angular/router";
 import { Subject, filter, switchMap, takeUntil, tap } from "rxjs";
 import { SharedModule } from "src/app/shared/shared.module";
 import { PracticeService } from "./services/practice.service";
+import { Question } from "./models/question";
+import { QuestionComponent } from "./question.component";
 
 @Component({
     standalone: true,
-    imports: [CommonModule, RouterModule, SharedModule],
+    imports: [ CommonModule, RouterModule, SharedModule, QuestionComponent ],
     template: `
         <app-breadcrumb-router></app-breadcrumb-router>
 
@@ -22,32 +24,7 @@ import { PracticeService } from "./services/practice.service";
             </div>
         </div>
 
-        <div class="d-flex flex-wrap" style="max-width: 1000px; margin: 0 auto;">
-
-            <div
-                *ngIf="questions[currQuestionIndex]?.comprehension"
-                class="mb-4"
-                style="flex: 9999 1 600px; padding: 1rem;"
-            >
-                <h2>Comprehension</h2>
-                <span [MathJax]="questions[currQuestionIndex]?.comprehension | htmlDecode | htmlDecode"></span>
-            </div>
-
-            <div style="flex: 1 1 400px; padding: 1rem;" >
-
-                <div class="mb-4">
-                    <h2>Question</h2>
-                    <span [MathJax]="questions[currQuestionIndex]?.question | htmlDecode | htmlDecode"></span>
-                </div>
-
-                <div>
-                    <h2>Options</h2>
-                    <div *ngFor="let opt of questions[currQuestionIndex]?.options">
-                        <span [MathJax]="opt.value | htmlDecode | htmlDecode"></span>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <app-question [question]="questions[currQuestionIndex]"></app-question>
     `,
     styles: [`
 
@@ -58,7 +35,7 @@ import { PracticeService } from "./services/practice.service";
             justify-content: center;
             padding: 1rem;
             max-width: 640px;
-            margin: min(5vh, 5rem) auto;
+            margin: min(3vh, 3rem) auto;
         }
 
         .q-step {
@@ -92,7 +69,7 @@ import { PracticeService } from "./services/practice.service";
 export class LevelComponent implements OnInit, OnDestroy {
 
     currQuestionIndex = 0;
-    questions: any[] = [];
+    questions: Question[] = [];
 
     destroy$ = new Subject<void>();
 
