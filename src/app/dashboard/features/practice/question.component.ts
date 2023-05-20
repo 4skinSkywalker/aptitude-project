@@ -1,5 +1,5 @@
 import { CommonModule } from "@angular/common";
-import { Component, Input, OnInit } from "@angular/core";
+import { Component, Input, OnChanges, OnInit, SimpleChanges } from "@angular/core";
 import { RouterModule } from "@angular/router";
 import { SharedModule } from "src/app/shared/shared.module";
 import { Question } from "./models/question";
@@ -12,7 +12,7 @@ import { Question } from "./models/question";
         <div *ngIf="question" class="question-wrap">
     
             <button
-                class="btn"
+                class="btn ms-3"
                 [class.btn-outline-primary]="!showSolution"
                 [class.btn-primary]="showSolution"
                 (click)="showSolution = !showSolution"
@@ -90,7 +90,7 @@ import { Question } from "./models/question";
         .question-wrap {
             max-width: 1000px;
             margin: 0 auto;
-            padding: 1rem;
+            margin-bottom: 5rem;
         }
 
         .option-wrap {
@@ -114,7 +114,7 @@ import { Question } from "./models/question";
         }
     `]
 })
-export class QuestionComponent implements OnInit {
+export class QuestionComponent implements OnInit, OnChanges {
 
     @Input("question") question!: Question;
     @Input("userAnswer") userAnswer?: string;
@@ -125,7 +125,13 @@ export class QuestionComponent implements OnInit {
 
     ngOnInit() { }
 
+    ngOnChanges(changes: SimpleChanges) {
+        if (changes.question.previousValue !== changes.question.currentValue) {
+            this.showSolution = false;
+        }
+    }
+
     onInputChange(d: any) {
-        console.log(d);
+        console.log("Selected radio", d);
     }
 }
