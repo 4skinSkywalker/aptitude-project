@@ -1,0 +1,7 @@
+@media (max-width: 600px) {
+    .breadcrumb--mobile-friendly {
+        display: grid;
+        gap: 0.25rem;
+        font-size: 90%;
+    }
+}

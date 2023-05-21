@@ -13,12 +13,12 @@ import { jsonCopy } from "src/app/utils/json";
     template: `
         <app-breadcrumb-router></app-breadcrumb-router>
 
-        <div class="px-3" style="max-width: 40ch; margin: 0 auto;">
+        <div class="search-wrap">
             <app-input
                 type="autocomplete"
                 name="hierarchy"
                 placeholder="Search into subcategories 🔍︎"
-                helper="The search applies to the current path and below"
+                helper="Applies to the current path and below"
                 [limit]="25"
                 [options]="filteredRoutes"
                 [formatter]="searchFormatter"
@@ -26,7 +26,7 @@ import { jsonCopy } from "src/app/utils/json";
                 [ngControl]="searchCtrl"
             ></app-input>
             <ng-template #searchTmpl let-r="result" let-t="term">
-                <div class="py-2" style="white-space: break-spaces">
+                <div class="search-result">
                     <h6 class="text-uppercase">{{ r.text }}</h6>
                     <ngb-highlight
                         style="display: block; font-size: 0.8rem; line-height: 1;"
@@ -50,6 +50,24 @@ import { jsonCopy } from "src/app/utils/json";
         </div>
     `,
     styles: [`
+
+        .search-wrap {
+            border: 1px solid #d0d0d0;
+            border-radius: 6px;
+            max-width: 40ch;
+            margin: 0 auto;
+            padding: 1rem;
+        }
+
+        ::ng-deep button[id^="ngb-typeahead"]:has(> .search-result) {
+            box-shadow: inset 0 2px 0 -1px #d0d0d0;
+        }
+
+        .search-result {
+            padding: 0.5rem 0;
+            white-space: break-spaces;
+        }
+
         .cat-grid {
             display: grid;
             grid-template-columns: 1fr;
@@ -60,7 +78,7 @@ import { jsonCopy } from "src/app/utils/json";
         }
 
         .cat-grid__item {
-            aspect-ratio: 1/1;
+            aspect-ratio: 1 / 1;
             border-radius: 20px;
             background: rgba(var(--app-gray_0), 1);
             box-shadow: 0 0 10px #0002;
@@ -77,6 +95,12 @@ import { jsonCopy } from "src/app/utils/json";
         .cat-grid__item:hover {
             box-shadow: 0 0 15px 5px #0001;
             transform: scale(1.05);
+        }
+
+        @media (max-width: 600px) {
+            .cat-grid__item {
+                aspect-ratio: 16 / 9;
+            }
         }
 
         .animated {
