@@ -35,12 +35,12 @@ import { DifficultyIndicatorComponent } from "./difficulty-indicator.component";
             >
                 <div class="locus-of-text__sol-comp">
 
-                    <div class="solution-sol" *ngIf="showSolution">
+                    <div class="locus-of-text__sol" *ngIf="showSolution">
                         <h2>Solution</h2>
                         <span [MathJax]="question.solution[0] | htmlDecode | htmlDecode"></span>
                     </div>
     
-                    <div class="solution-comp" *ngIf="question.comprehension">
+                    <div class="locus-of-text__comp" *ngIf="question.comprehension">
                         <h2>Comprehension</h2>
                         <span [MathJax]="question.comprehension | htmlDecode | htmlDecode"></span>
                     </div>
@@ -103,35 +103,35 @@ import { DifficultyIndicatorComponent } from "./difficulty-indicator.component";
             flex-wrap: wrap;
         }
 
-        .locus-of-text__sol-comp-wrap,
-        .locus-of-text__ques-opt-wrap {
-            padding: 1rem;
-        }
-
         .locus-of-text__sol-comp-wrap {
             flex: 9999 1;
         }
 
         .locus-of-text__ques-opt-wrap {
-            flex: 1 1 400px;
+            flex: 1 1 360px;
         }
 
         .locus-of-text__sol-comp,
         .locus-of-text__ques-opt {
             display: grid;
-            gap: 2rem;
             margin-bottom: 2rem;
         }
 
         .locus-of-text__ques-opt {
             position: sticky;
-            top: 2rem;
+            top: 1rem;
+        }
+
+        .locus-of-text__sol,
+        .locus-of-text__comp,
+        .locus-of-text__ques,
+        .locus-of-text__opt {
+            padding: 1rem;
         }
 
         @media (min-width: 600px) {
             .two-cols {
                 display: grid;
-                gap: 2rem;
                 grid-template-columns: 4fr 3fr;
             }
         }

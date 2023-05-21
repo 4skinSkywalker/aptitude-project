@@ -60,27 +60,31 @@ import { QuestionComponent } from "./question.component";
 
         .q-steps {
             display: flex;
-            gap: 0.5rem;
+            gap: 0.25rem;
             flex-wrap: wrap;
             justify-content: center;
-            padding: 0 1rem;
+            padding: 0 0.5rem;
             max-width: 640px;
             margin: 0 auto 1rem;
         }
 
         .q-step {
             width: 48px;
-            height: 48px;
+            height: 32px;
             display: grid;
             place-items: center;
             background: rgba(var(--app-gray_200), 0.8);
-            border-radius: 50%;
+            border-radius: 1rem;
             transition: all 200ms ease;
             cursor: pointer;
         }
 
         .q-step--active {
             filter: invert(1);
+        }
+
+        .q-step:has(~ .q-step.q-step--active) {
+            filter: invert(0.33);
         }
 
         .q-step:hover {
@@ -91,7 +95,7 @@ import { QuestionComponent } from "./question.component";
         @media (min-width: 600px) {
             .q-step {
                 width: 32px;
-                height: 32px;
+                height: 24px;
             }
         }
     `]
