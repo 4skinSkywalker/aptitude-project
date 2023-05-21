@@ -27,42 +27,41 @@ import { DifficultyIndicatorComponent } from "./difficulty-indicator.component";
             </button>
         </div>
 
-        <div class="d-flex flex-wrap">
+        <div class="locus-of-text">
 
             <div
                 *ngIf="question.comprehension || showSolution"
-                style="flex: 9999 1; padding: 1rem;"
+                class="locus-of-text__sol-comp-wrap"
             >
+                <div class="locus-of-text__sol-comp">
 
-                <div *ngIf="showSolution" class="mb-4">
-
-                    <h2>Solution</h2>
-
-                    <span [MathJax]="question.solution[0] | htmlDecode | htmlDecode"></span>
-                </div>
-
-                <div *ngIf="question.comprehension" class="mb-4">
-
-                    <h2>Comprehension</h2>
-
-                    <span [MathJax]="question.comprehension | htmlDecode | htmlDecode"></span>
+                    <div class="solution-sol" *ngIf="showSolution">
+                        <h2>Solution</h2>
+                        <span [MathJax]="question.solution[0] | htmlDecode | htmlDecode"></span>
+                    </div>
+    
+                    <div class="solution-comp" *ngIf="question.comprehension">
+                        <h2>Comprehension</h2>
+                        <span [MathJax]="question.comprehension | htmlDecode | htmlDecode"></span>
+                    </div>
                 </div>
             </div>
 
-            <div style="flex: 1 1 400px; padding: 1rem;">
-                <div class="position-sticky" style="top: 1rem">
+            <div class="locus-of-text__ques-opt-wrap">
+                <div
+                    class="locus-of-text__ques-opt"
+                    [class.two-cols]="
+                        !(question.comprehension || showSolution) && question.options.length
+                    "
+                >
             
-                    <div class="mb-4">
-
+                    <div class="locus-of-text__ques">
                         <h2>Question</h2>
-
                         <span [MathJax]="question.question | htmlDecode | htmlDecode"></span>
                     </div>
 
-                    <div *ngIf="question.options.length">
-
+                    <div class="locus-of-text__opt" *ngIf="question.options.length">
                         <h2>Options</h2>
-                        
                         <div
                             *ngFor="let opt of question.options"
                             class="option-wrap"
@@ -80,8 +79,12 @@ import { DifficultyIndicatorComponent } from "./difficulty-indicator.component";
                                 >
                                 <label
                                     class="form-check-label"
-                                    [class.right-option]="radio.checked && opt.prompt === question.correctOption"
-                                    [class.wrong-option]="radio.checked && opt.prompt !== question.correctOption"
+                                    [class.right-option]="
+                                        radio.checked && opt.prompt === question.correctOption
+                                    "
+                                    [class.wrong-option]="
+                                        radio.checked && opt.prompt !== question.correctOption
+                                    "
                                     [for]="'option-' + opt._id"
                                 >
                                     <span [MathJax]="opt.value | htmlDecode | htmlDecode"></span>
@@ -94,6 +97,44 @@ import { DifficultyIndicatorComponent } from "./difficulty-indicator.component";
         </div>
     `,
     styles: [`
+
+        .locus-of-text {
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        .locus-of-text__sol-comp-wrap,
+        .locus-of-text__ques-opt-wrap {
+            padding: 1rem;
+        }
+
+        .locus-of-text__sol-comp-wrap {
+            flex: 9999 1;
+        }
+
+        .locus-of-text__ques-opt-wrap {
+            flex: 1 1 400px;
+        }
+
+        .locus-of-text__sol-comp,
+        .locus-of-text__ques-opt {
+            display: grid;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .locus-of-text__ques-opt {
+            position: sticky;
+            top: 2rem;
+        }
+
+        @media (min-width: 600px) {
+            .two-cols {
+                display: grid;
+                gap: 2rem;
+                grid-template-columns: 4fr 3fr;
+            }
+        }
 
         .option-wrap {
             border-radius: 0.5rem;
