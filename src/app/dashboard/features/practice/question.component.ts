@@ -127,6 +127,12 @@ import { DifficultyIndicatorComponent } from "./difficulty-indicator.component";
         .locus-of-text__ques,
         .locus-of-text__opt {
             padding: 1rem;
+            animation: forwards ease-out 600ms FadeIn;
+            opacity: 0;
+        }
+
+        @keyframes FadeIn {
+            from { opacity: 0 } to { opacity: 1 }
         }
 
         @media (min-width: 600px) {
