@@ -3,11 +3,19 @@ import { Component, OnInit } from "@angular/core";
 import { SharedModule } from "src/app/shared/shared.module";
 import { routes } from "../practice/practice.module";
 import { QuestionComponent } from "../practice/question.component";
+import { PracticeService } from "../practice/services/practice.service";
+import { Question } from "../practice/models/question";
+import { lastValueFrom } from "rxjs";
 
 interface Link {
     path: string;
     title: any;
     questions: number;
+}
+
+interface Difficulty {
+    difficulty: string;
+    difficultyValue: number;
 }
 
 @Component({
@@ -52,7 +60,7 @@ interface Link {
                     <a ngbNavLink class="wiz__step">
                         <div class="wiz__title">Level</div>
                         <div class="wiz__descr">{{
-                            level ? level : "Choose a level"
+                            level ? level.difficulty : "Choose a level"
                         }}</div>
                     </a>
                     <ng-template ngbNavContent>
@@ -65,7 +73,7 @@ interface Link {
                                 class="level-grid__item"
                                 (click)="setLevel(level)"
                             >
-                                {{ level }}
+                                {{ level.difficulty }}
                             </div>
                         </div>
 
@@ -79,17 +87,24 @@ interface Link {
                     </a>
                     <ng-template ngbNavContent>
                         
-                        <div class="col-md-8 mx-auto mb-3 text-center">
+                        <div class="rules col-md-8 mx-auto text-center">
                             
-                            <p class="mb-0 lead">Correctly answered questions will increase the difficulty.</p>
-
-                            <p class="mb-0 lead">Incorretly answered questions will decrease the difficulty.</p>
+                            <p class="mb-1 lead">Correct answers will increase the difficulty, while incorrect answers will decrease it.</p>
     
-                            <p class="mb-0 lead">After an answer is being given it will reveal the solution</p>
+                            <p class="lead">Only after answering you will be able to reveal the solution.</p>
                         </div>
                         
-                        <div class="text-center">
-                            <button class="btn btn-outline-dark rounded-pill text-uppercase">next question <i class="bi bi-shuffle"></i></button>
+                        <div class="text-center mb-3">
+                            <button
+                                class="btn btn-outline-dark rounded-pill text-uppercase"
+                                (click)="loadQuestion()"
+                            >
+                                next question <i class="bi bi-shuffle"></i>
+                            </button>
+                        </div>
+
+                        <div *ngIf="currQuestion">
+                            <app-question [question]="currQuestion"></app-question>
                         </div>
 
                     </ng-template>
@@ -134,6 +149,10 @@ interface Link {
             box-shadow: 0 0 15px 5px #0001;
             transform: scale(1.05);
         }
+
+        .rules > .lead {
+            font-size: 1rem;
+        }
     `]
 })
 export class AdaptiveComponent implements OnInit {
@@ -141,12 +160,20 @@ export class AdaptiveComponent implements OnInit {
     active = 1;
 
     exam?: Link;
-    level?: string;
+    level?: Difficulty;
 
     links: Link[] = Object.values(routes[0].data!.children);
-    levels = [ "Easy", "Medium", "Hard" ];
+    levels: Difficulty[] = [
+        { difficulty: "Easy", difficultyValue: 0 },
+        { difficulty: "Medium", difficultyValue: 0.3 },
+        { difficulty: "Hard", difficultyValue: 0.5 }
+    ];
+
+    currQuestion?: Question;
     
-    constructor() { }
+    constructor(
+        private practiceService: PracticeService
+    ) { }
 
     ngOnInit() { }
 
@@ -161,13 +188,33 @@ export class AdaptiveComponent implements OnInit {
         }
     }
 
-    setLevel(level: string | undefined) {
+    setLevel(level: Difficulty | undefined) {
         if (!level) {
             this.level = undefined;
         }
         else {
+
             this.level = level;
             this.active = 3;
+
+            this.loadQuestion();
         }
+    }
+
+    async loadQuestion() {
+
+        if (!this.exam || !this.level)
+            return;
+        
+        // TODO decrease difficultyValue if currQuestion not answered or incorrect
+
+        const mongoPath = routes[0].data?.mongoPath + this.exam.title.original;
+
+        const randomQuestions = await lastValueFrom(
+            this.practiceService
+                .getRandomQuestion$(mongoPath, this.level.difficultyValue, 1)
+        );
+
+        this.currQuestion = randomQuestions[0];
     }
 }

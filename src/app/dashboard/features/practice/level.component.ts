@@ -119,7 +119,7 @@ export class LevelComponent implements OnInit, OnDestroy {
                 takeUntil(this.destroy$),
                 filter(data => data.leaf),
                 switchMap(data =>
-                    this.practiceService.getQuestions(data.mongoPath)
+                    this.practiceService.getQuestions$(data.mongoPath)
                 ),
                 tap(questions => this.questions = questions)
             )
