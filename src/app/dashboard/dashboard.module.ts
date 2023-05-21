@@ -18,15 +18,10 @@ const routes: Routes = [
           import('./features/practice/practice.module').then(m => m.PracticeModule)
       },
       {
-        path: 'kitchen-sink',
+        path: 'adaptive',
         loadChildren: () =>
-          import('./features/kitchen-sink/kitchen-sink.module').then(m => m.KitchenSinkModule)
-      },
-      {
-        path: 'demos',
-        loadChildren: () =>
-          import('./features/demos/demos.module').then(m => m.DemosModule)
-      },
+          import('./features/adaptive/adaptive.module').then(m => m.AdaptiveModule)
+      }
     ]
   },
 ];

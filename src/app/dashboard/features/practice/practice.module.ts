@@ -5,7 +5,6 @@ import { SharedModule } from 'src/app/shared/shared.module';
 import { groups } from './data/groups';
 import { HierarchyComponent } from './hierarchy.component';
 import { LevelComponent } from './level.component';
-import { HtmlDecodePipe } from '../../../shared/pipes/html-decode.pipe';
 
 const rootRoute = {
     path: "",
