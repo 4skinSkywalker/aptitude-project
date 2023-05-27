@@ -2,7 +2,7 @@ import { CommonModule } from "@angular/common";
 import { Component, OnInit } from "@angular/core";
 import { SharedModule } from "src/app/shared/shared.module";
 import { routes } from "../practice/practice.module";
-import { QuestionComponent } from "../practice/question.component";
+import { QuestionAnswer, QuestionComponent } from "../practice/question.component";
 import { PracticeService } from "../practice/services/practice.service";
 import { Question } from "../practice/models/question";
 import { lastValueFrom } from "rxjs";
@@ -60,7 +60,7 @@ interface Difficulty {
                     <a ngbNavLink class="wiz__step">
                         <div class="wiz__title">Level</div>
                         <div class="wiz__descr">{{
-                            level ? level.difficulty : "Choose a level"
+                            level ? getLevelDifficulty() : "Choose a level"
                         }}</div>
                     </a>
                     <ng-template ngbNavContent>
@@ -104,7 +104,11 @@ interface Difficulty {
                         </div>
 
                         <div *ngIf="currQuestion">
-                            <app-question [question]="currQuestion"></app-question>
+                            <app-question
+                                mode="adaptive"
+                                [question]="currQuestion"
+                                (userAnswered)="onUserAnswer($event)"
+                            ></app-question>
                         </div>
 
                     </ng-template>
@@ -159,6 +163,8 @@ export class AdaptiveComponent implements OnInit {
 
     active = 1;
 
+    difficultyDecrease = 0.03;
+    difficultyIncrease = 0.02;
     exam?: Link;
     level?: Difficulty;
 
@@ -169,7 +175,10 @@ export class AdaptiveComponent implements OnInit {
         { difficulty: "Hard", difficultyValue: 0.5 }
     ];
 
+    warmedUp = false;
+    currDifficultyValue = 0;
     currQuestion?: Question;
+    currQuestionAnswer?: QuestionAnswer;
     
     constructor(
         private practiceService: PracticeService
@@ -181,6 +190,7 @@ export class AdaptiveComponent implements OnInit {
         if (!link) {
             this.exam = undefined;
             this.level = undefined;
+            this.currDifficultyValue = 0;
         }
         else {
             this.exam = link;
@@ -191,14 +201,27 @@ export class AdaptiveComponent implements OnInit {
     setLevel(level: Difficulty | undefined) {
         if (!level) {
             this.level = undefined;
+            this.currDifficultyValue = 0;
         }
         else {
 
             this.level = level;
+            this.currDifficultyValue = level.difficultyValue;
             this.active = 3;
 
+            this.warmedUp = false;
             this.loadQuestion();
         }
+    }
+
+    getLevelDifficulty() {
+        let i = 0;
+        for (; i < this.levels.length - 1; i++) {
+            if (this.currDifficultyValue < this.levels[i + 1].difficultyValue) {
+                return this.levels[i].difficulty;
+            }
+        }
+        return this.levels[i].difficulty;
     }
 
     async loadQuestion() {
@@ -206,15 +229,29 @@ export class AdaptiveComponent implements OnInit {
         if (!this.exam || !this.level)
             return;
         
-        // TODO decrease difficultyValue if currQuestion not answered or incorrect
+        if (this.warmedUp) {
+            if (
+                this.currQuestionAnswer
+             && this.currQuestionAnswer.userAnswer === this.currQuestionAnswer.correctOption
+            ) {
+                this.currDifficultyValue += this.difficultyIncrease;
+            }
+            else {
+                this.currDifficultyValue -= this.difficultyDecrease;
+            }
+        }
 
         const mongoPath = routes[0].data?.mongoPath + this.exam.title.original;
-
         const randomQuestions = await lastValueFrom(
             this.practiceService
-                .getRandomQuestion$(mongoPath, this.level.difficultyValue, 1)
+                .getRandomQuestion$(mongoPath, this.currDifficultyValue, 1)
         );
 
         this.currQuestion = randomQuestions[0];
+        this.warmedUp = true;
+    }
+
+    onUserAnswer(questionAnswer: QuestionAnswer) {
+        this.currQuestionAnswer =  questionAnswer;
     }
 }

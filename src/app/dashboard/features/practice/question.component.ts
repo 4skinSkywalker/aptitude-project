@@ -1,8 +1,13 @@
 import { CommonModule } from "@angular/common";
-import { Component, Input, OnChanges, OnInit, SimpleChanges } from "@angular/core";
+import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from "@angular/core";
 import { SharedModule } from "src/app/shared/shared.module";
-import { Question } from "./models/question";
+import { Question, QuestionOption } from "./models/question";
 import { DifficultyIndicatorComponent } from "./difficulty-indicator.component";
+
+export interface QuestionAnswer {
+    userAnswer: string;
+    correctOption: string;
+}
 
 @Component({
     standalone: true,
@@ -10,14 +15,19 @@ import { DifficultyIndicatorComponent } from "./difficulty-indicator.component";
     imports: [ CommonModule, SharedModule, DifficultyIndicatorComponent ],
     template: `
 
-        <div class="d-flex gap-3 align-items-end px-3">
+        <div class="d-flex flex-wrap gap-3 align-items-end px-3">
 
             <app-difficulty-indicator
                 [difficulty]="question.difficultyStats.difficulty"
                 [difficultyValue]="question.difficultyStats.difficultyValue"
             ></app-difficulty-indicator>
 
+            <span *ngIf="mode === 'adaptive'" class="badge bg-primary">
+                {{ question.path.split(",").slice(-3)[0] }}
+            </span>
+
             <button
+                *ngIf="mode === 'practice' || userAnswer !== undefined"
                 class="btn"
                 [class.btn-outline-primary]="!showSolution"
                 [class.btn-primary]="showSolution"
@@ -65,17 +75,15 @@ import { DifficultyIndicatorComponent } from "./difficulty-indicator.component";
                         <div
                             *ngFor="let opt of question.options"
                             class="option-wrap"
-                            (click)="radio.checked = true"
+                            (click)=" onUserAnswer(radio, opt)"
                         >
                             <div class="form-check">
                                 <input
                                     #radio
-                                    class="form-check-input"
+                                    class="form-check-input not-clickable"
                                     type="radio"
                                     [name]="'question-' + question._id"
-                                    [id]="'option-' + opt._id"
                                     [checked]="opt.prompt === userAnswer"
-                                    (change)="onInputChange(radio)"
                                 >
                                 <label
                                     class="form-check-label"
@@ -85,7 +93,6 @@ import { DifficultyIndicatorComponent } from "./difficulty-indicator.component";
                                     [class.wrong-option]="
                                         radio.checked && opt.prompt !== question.correctOption
                                     "
-                                    [for]="'option-' + opt._id"
                                 >
                                     <span [MathJax]="opt.value | htmlDecode | htmlDecode"></span>
                                 </label>
@@ -165,8 +172,11 @@ import { DifficultyIndicatorComponent } from "./difficulty-indicator.component";
 })
 export class QuestionComponent implements OnInit, OnChanges {
 
+    @Input("mode") mode: "practice" | "adaptive" = "practice";
     @Input("question") question!: Question;
     @Input("userAnswer") userAnswer?: string;
+
+    @Output("userAnswered") userAnsweredEmitter = new EventEmitter<QuestionAnswer>();
 
     showSolution = false;
 
@@ -177,10 +187,20 @@ export class QuestionComponent implements OnInit, OnChanges {
     ngOnChanges(changes: SimpleChanges) {
         if (changes.question.previousValue !== changes.question.currentValue) {
             this.showSolution = false;
+            this.userAnswer = undefined;
         }
     }
 
-    onInputChange(d: any) {
-        console.log("Selected radio", d);
+    onUserAnswer(radio: HTMLInputElement, option: QuestionOption) {
+        if (this.mode === "practice" || this.userAnswer === undefined) {
+
+            radio.checked = true;
+            this.userAnswer = option.prompt;
+
+            this.userAnsweredEmitter.emit({
+                userAnswer: this.userAnswer,
+                correctOption: this.question.correctOption
+            });
+        }
     }
 }
