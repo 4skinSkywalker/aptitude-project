@@ -71,7 +71,9 @@ export interface QuestionAnswer {
                     </div>
 
                     <div class="locus-of-text__opt" *ngIf="question.options.length">
+
                         <h2>Options</h2>
+
                         <div
                             *ngFor="let opt of question.options"
                             class="option-wrap"
@@ -98,6 +100,9 @@ export interface QuestionAnswer {
                                 </label>
                             </div>
                         </div>
+
+                        <!-- Point of projection -->
+                        <ng-content></ng-content>
                     </div>
                 </div>
             </div>

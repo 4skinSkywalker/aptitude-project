@@ -93,22 +93,21 @@ interface Difficulty {
     
                             <p class="lead">Only after answering you will be able to reveal the solution.</p>
                         </div>
-                        
-                        <div class="text-center mb-3">
-                            <button
-                                class="btn btn-outline-dark rounded-pill text-uppercase"
-                                (click)="loadQuestion()"
-                            >
-                                next question <i class="bi bi-shuffle"></i>
-                            </button>
-                        </div>
 
                         <div *ngIf="currQuestion">
                             <app-question
                                 mode="adaptive"
                                 [question]="currQuestion"
                                 (userAnswered)="onUserAnswer($event)"
-                            ></app-question>
+                            >
+                                <button
+                                    *ngIf="currQuestionAnswer"
+                                    class="btn btn-primary rounded-pill text-uppercase mt-3"
+                                    (click)="loadQuestion()"
+                                >
+                                    next question <i class="bi bi-shuffle"></i>
+                                </button>
+                            </app-question>
                         </div>
 
                     </ng-template>
@@ -190,7 +189,6 @@ export class AdaptiveComponent implements OnInit {
         if (!link) {
             this.exam = undefined;
             this.level = undefined;
-            this.currDifficultyValue = 0;
         }
         else {
             this.exam = link;
@@ -210,6 +208,8 @@ export class AdaptiveComponent implements OnInit {
             this.active = 3;
 
             this.warmedUp = false;
+            this.currQuestion = undefined;
+            this.currQuestionAnswer = undefined;
             this.loadQuestion();
         }
     }
@@ -228,12 +228,10 @@ export class AdaptiveComponent implements OnInit {
 
         if (!this.exam || !this.level)
             return;
-        
+
         if (this.warmedUp) {
-            if (
-                this.currQuestionAnswer
-             && this.currQuestionAnswer.userAnswer === this.currQuestionAnswer.correctOption
-            ) {
+            const cqa = this.currQuestionAnswer;
+            if (cqa && cqa.userAnswer === cqa.correctOption) {
                 this.currDifficultyValue += this.difficultyIncrease;
             }
             else {
@@ -247,6 +245,7 @@ export class AdaptiveComponent implements OnInit {
                 .getRandomQuestion$(mongoPath, this.currDifficultyValue, 1)
         );
 
+        this.currQuestionAnswer = undefined;
         this.currQuestion = randomQuestions[0];
         this.warmedUp = true;
     }
