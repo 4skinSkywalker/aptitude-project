@@ -6,6 +6,7 @@ import { QuestionAnswer, QuestionComponent } from "../practice/question.componen
 import { QuestionService } from "../practice/services/question.service";
 import { Question } from "../practice/models/question";
 import { lastValueFrom } from "rxjs";
+import { AuthService } from "src/app/services/auth.service";
 
 interface Link {
     path: string;
@@ -180,6 +181,7 @@ export class AdaptiveComponent implements OnInit {
     currQuestionAnswer?: QuestionAnswer;
     
     constructor(
+        private authService: AuthService,
         private questionService: QuestionService
     ) { }
 
@@ -249,7 +251,18 @@ export class AdaptiveComponent implements OnInit {
         this.warmedUp = true;
     }
 
-    onUserAnswer(questionAnswer: QuestionAnswer) {
-        this.currQuestionAnswer =  questionAnswer;
+    async onUserAnswer(answer: QuestionAnswer) {
+
+        this.currQuestionAnswer =  answer;
+
+        const { result } = await lastValueFrom(
+            this.questionService.postQuestionAnswer$("adaptive", answer._id, answer.userAnswer)
+        );
+
+        const user = this.authService.user;
+        if (user) {
+            user.adaptiveHistory = user.adaptiveHistory || {};
+            user.adaptiveHistory[result._id] = result;
+        }
     }
 }

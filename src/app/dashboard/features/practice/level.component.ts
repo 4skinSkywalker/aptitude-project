@@ -154,7 +154,5 @@ export class LevelComponent implements OnInit, OnDestroy {
             user.practiceHistory = user.practiceHistory || {};
             user.practiceHistory[questionAnswer._id] = questionAnswer;
         }
-
-        console.log(user);
     }
 }

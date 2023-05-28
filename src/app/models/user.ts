@@ -13,5 +13,6 @@ export interface User {
     username: string;
     email: string;
     roles: string[];
-    practiceHistory?: { [key: string]: QuestionAnswer }
+    practiceHistory?: { [key: string]: QuestionAnswer };
+    adaptiveHistory?: { [key: string]: QuestionAnswer }
 }
