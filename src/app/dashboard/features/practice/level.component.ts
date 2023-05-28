@@ -6,6 +6,7 @@ import { SharedModule } from "src/app/shared/shared.module";
 import { QuestionService } from "./services/question.service";
 import { Question } from "./models/question";
 import { QuestionAnswer, QuestionComponent } from "./question.component";
+import { AuthService } from "src/app/services/auth.service";
 
 @Component({
     standalone: true,
@@ -111,6 +112,7 @@ export class LevelComponent implements OnInit, OnDestroy {
     destroy$ = new Subject<void>();
 
     constructor(
+        private authService: AuthService,
         private route: ActivatedRoute,
         private questionService: QuestionService
     ) { }
@@ -141,9 +143,18 @@ export class LevelComponent implements OnInit, OnDestroy {
         this.currQuestionIndex = Math.min(this.currQuestionIndex + 1, this.questions.length - 1);
     }
 
-    async onUserAnswer({ question, userAnswer }: QuestionAnswer) {
-        await lastValueFrom(
-            this.questionService.postQuestionAnswer$("practice", question, userAnswer)
+    async onUserAnswer({ _id, userAnswer }: QuestionAnswer) {
+
+        const { result: questionAnswer } = await lastValueFrom(
+            this.questionService.postQuestionAnswer$("practice", _id, userAnswer)
         );
+
+        const user = this.authService.user;
+        if (user) {
+            user.practiceHistory = user.practiceHistory || {};
+            user.practiceHistory[questionAnswer._id] = questionAnswer;
+        }
+
+        console.log(user);
     }
 }

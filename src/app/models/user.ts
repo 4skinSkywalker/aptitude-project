@@ -1,3 +1,5 @@
+import { QuestionAnswer } from "../dashboard/features/practice/question.component";
+
 export enum Roles {
     Viewer = "viewer",
 }
@@ -11,4 +13,5 @@ export interface User {
     username: string;
     email: string;
     roles: string[];
+    practiceHistory?: { [key: string]: QuestionAnswer }
 }

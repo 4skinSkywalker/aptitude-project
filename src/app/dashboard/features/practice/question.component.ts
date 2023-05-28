@@ -5,8 +5,11 @@ import { Question, QuestionOption } from "./models/question";
 import { DifficultyIndicatorComponent } from "./difficulty-indicator.component";
 
 export interface QuestionAnswer {
-    question: Question,
+    _id: string;
+    path: string;
+    difficulty: string;
     userAnswer: string;
+    correctOption: string;
 }
 
 @Component({
@@ -210,8 +213,11 @@ export class QuestionComponent implements OnInit, OnChanges {
             this.userAnswer = option.prompt;
 
             this.userAnsweredEmitter.emit({
-                question: this.question,
-                userAnswer: this.userAnswer
+                _id: this.question._id,
+                path: this.question.path,
+                difficulty: this.question.difficultyStats.difficulty,
+                userAnswer: this.userAnswer,
+                correctOption: this.question.correctOption
             });
         }
     }

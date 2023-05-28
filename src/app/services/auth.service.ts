@@ -22,6 +22,9 @@ export class AuthService {
 
   private _user$ = new BehaviorSubject<User>(ANONYMOUS_USER as User);
   user$: Observable<User> = this._user$.asObservable();
+  get user() {
+    return this._user$.getValue();
+  }
 
   constructor(
     private http: HttpClient

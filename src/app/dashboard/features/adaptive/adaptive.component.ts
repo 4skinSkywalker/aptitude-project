@@ -231,7 +231,7 @@ export class AdaptiveComponent implements OnInit {
 
         if (this.warmedUp) {
             const cqa = this.currQuestionAnswer;
-            if (cqa && cqa.userAnswer === cqa.question.correctOption) {
+            if (cqa && cqa.userAnswer === cqa.correctOption) {
                 this.currDifficultyValue += this.difficultyIncrease;
             }
             else {
