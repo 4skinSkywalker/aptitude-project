@@ -5,8 +5,8 @@ import { Question, QuestionOption } from "./models/question";
 import { DifficultyIndicatorComponent } from "./difficulty-indicator.component";
 
 export interface QuestionAnswer {
+    question: Question,
     userAnswer: string;
-    correctOption: string;
 }
 
 @Component({
@@ -147,6 +147,13 @@ export interface QuestionAnswer {
             from { opacity: 0 } to { opacity: 1 }
         }
 
+        @media (max-width: 600px) {
+            ::ng-deep .locus-of-text img {
+                width: 100% !important;
+                height: auto !important;
+            }
+        }
+
         @media (min-width: 600px) {
             .two-cols {
                 display: grid;
@@ -203,8 +210,8 @@ export class QuestionComponent implements OnInit, OnChanges {
             this.userAnswer = option.prompt;
 
             this.userAnsweredEmitter.emit({
-                userAnswer: this.userAnswer,
-                correctOption: this.question.correctOption
+                question: this.question,
+                userAnswer: this.userAnswer
             });
         }
     }

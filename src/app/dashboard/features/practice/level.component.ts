@@ -1,11 +1,11 @@
 import { CommonModule } from "@angular/common";
 import { Component, OnDestroy, OnInit } from "@angular/core";
 import { ActivatedRoute, RouterModule } from "@angular/router";
-import { Subject, filter, switchMap, takeUntil, tap } from "rxjs";
+import { Subject, filter, lastValueFrom, switchMap, takeUntil, tap } from "rxjs";
 import { SharedModule } from "src/app/shared/shared.module";
-import { PracticeService } from "./services/practice.service";
+import { QuestionService } from "./services/question.service";
 import { Question } from "./models/question";
-import { QuestionComponent } from "./question.component";
+import { QuestionAnswer, QuestionComponent } from "./question.component";
 
 @Component({
     standalone: true,
@@ -46,7 +46,10 @@ import { QuestionComponent } from "./question.component";
             </div>
     
             <div *ngIf="questions[currQuestionIndex] as question">
-                <app-question [question]="question"></app-question>
+                <app-question
+                    [question]="question"
+                    (userAnswered)="onUserAnswer($event)"
+                ></app-question>
             </div>
         </div>
     `,
@@ -109,7 +112,7 @@ export class LevelComponent implements OnInit, OnDestroy {
 
     constructor(
         private route: ActivatedRoute,
-        private practiceService: PracticeService
+        private questionService: QuestionService
     ) { }
 
     ngOnInit() {
@@ -119,9 +122,9 @@ export class LevelComponent implements OnInit, OnDestroy {
                 takeUntil(this.destroy$),
                 filter(data => data.leaf),
                 switchMap(data =>
-                    this.practiceService.getQuestions$(data.mongoPath)
+                    this.questionService.getQuestions$(data.mongoPath)
                 ),
-                tap(questions => this.questions = questions)
+                tap(response => this.questions = response.result)
             )
             .subscribe();
     }
@@ -136,5 +139,11 @@ export class LevelComponent implements OnInit, OnDestroy {
 
     nextQuestion() {
         this.currQuestionIndex = Math.min(this.currQuestionIndex + 1, this.questions.length - 1);
+    }
+
+    async onUserAnswer({ question, userAnswer }: QuestionAnswer) {
+        await lastValueFrom(
+            this.questionService.postQuestionAnswer$("practice", question, userAnswer)
+        );
     }
 }

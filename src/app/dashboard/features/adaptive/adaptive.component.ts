@@ -3,7 +3,7 @@ import { Component, OnInit } from "@angular/core";
 import { SharedModule } from "src/app/shared/shared.module";
 import { routes } from "../practice/practice.module";
 import { QuestionAnswer, QuestionComponent } from "../practice/question.component";
-import { PracticeService } from "../practice/services/practice.service";
+import { QuestionService } from "../practice/services/question.service";
 import { Question } from "../practice/models/question";
 import { lastValueFrom } from "rxjs";
 
@@ -180,7 +180,7 @@ export class AdaptiveComponent implements OnInit {
     currQuestionAnswer?: QuestionAnswer;
     
     constructor(
-        private practiceService: PracticeService
+        private questionService: QuestionService
     ) { }
 
     ngOnInit() { }
@@ -231,7 +231,7 @@ export class AdaptiveComponent implements OnInit {
 
         if (this.warmedUp) {
             const cqa = this.currQuestionAnswer;
-            if (cqa && cqa.userAnswer === cqa.correctOption) {
+            if (cqa && cqa.userAnswer === cqa.question.correctOption) {
                 this.currDifficultyValue += this.difficultyIncrease;
             }
             else {
@@ -240,9 +240,8 @@ export class AdaptiveComponent implements OnInit {
         }
 
         const mongoPath = routes[0].data?.mongoPath + this.exam.title.original;
-        const randomQuestions = await lastValueFrom(
-            this.practiceService
-                .getRandomQuestion$(mongoPath, this.currDifficultyValue, 1)
+        const { result: randomQuestions } = await lastValueFrom(
+            this.questionService.getRandomQuestions$(mongoPath, this.currDifficultyValue, 1)
         );
 
         this.currQuestionAnswer = undefined;

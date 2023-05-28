@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, map, Observable, tap, timer } from "rxjs";
+import { BehaviorSubject, map, Observable, tap } from "rxjs";
 import { AnonymousUser, User } from '../models/user';
 import { parseJwt } from '../utils/json';
 import { HttpClient } from '@angular/common/http';
