@@ -38,7 +38,7 @@ interface HierarchyLink {
             <h5 class="mb-3" style="margin-top: -2rem">Are you sure?</h5>
 
             <p>Are you sure you want to reset the progresses of the categories on this page?<br><span class="text-danger">This operation cannot be undone.</span></p>
-            
+
             <div class="d-flex flex-wrap justify-content-center justify-content-md-between">
 
                 <button class="btn btn-outline-secondary" (click)="d.close()">
@@ -60,7 +60,7 @@ interface HierarchyLink {
                 class="btn btn-outline-danger"
                 (click)="d.showModal()"
             >
-                Reset progress <i class="bi bi-trash3 ps-2"></i>
+                Reset progresses <i class="bi bi-trash3 ps-2"></i>
             </button>
         </div>
 

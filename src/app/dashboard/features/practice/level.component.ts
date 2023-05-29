@@ -1,6 +1,6 @@
 import { CommonModule } from "@angular/common";
 import { ChangeDetectorRef, Component, OnDestroy, OnInit } from "@angular/core";
-import { ActivatedRoute, RouterModule } from "@angular/router";
+import { ActivatedRoute, Data, RouterModule } from "@angular/router";
 import { Subject, combineLatest, filter, lastValueFrom, map, of, switchMap, takeUntil, tap } from "rxjs";
 import { SharedModule } from "src/app/shared/shared.module";
 import { QuestionService } from "./services/question.service";
@@ -12,7 +12,43 @@ import { AuthService } from "src/app/services/auth.service";
     standalone: true,
     imports: [ CommonModule, RouterModule, SharedModule, QuestionComponent ],
     template: `
-        <app-breadcrumb-router></app-breadcrumb-router>
+
+        <dialog #d style="max-width: 600px; box-shadow: 0 0 0 200vmax #0004; border: 0; border-radius: 8px;">
+
+            <div class="text-end">
+                <button class="btn" (click)="d.close()">
+                    <i class="bi bi-x-lg"></i>
+                </button>
+            </div>
+
+            <h5 class="mb-3" style="margin-top: -2rem">Are you sure?</h5>
+
+            <p>Are you sure you want to reset the progresses of this level?<br><span class="text-danger">This operation cannot be undone.</span></p>
+
+            <div class="d-flex flex-wrap justify-content-center justify-content-md-between">
+
+                <button class="btn btn-outline-secondary" (click)="d.close()">
+                    <i class="bi bi-x-lg pe-2"></i> Cancel
+                </button>
+
+                <button class="btn btn-danger" (click)="resetProgress(); d.close();">
+                    Delete <i class="bi bi-trash3 ps-2"></i>
+                </button>
+            </div>
+        </dialog>
+
+        <div class="d-flex flex-wrap gap-3 justify-content-center justify-content-md-between align-items-center px-3">
+
+            <app-breadcrumb-router></app-breadcrumb-router>
+
+            <button
+                *ngIf="routeData"
+                class="btn btn-outline-danger"
+                (click)="d.showModal()"
+            >
+                Reset progress <i class="bi bi-trash3 ps-2"></i>
+            </button>
+        </div>
 
         <div class="q-steps">
             <div
@@ -106,6 +142,8 @@ import { AuthService } from "src/app/services/auth.service";
 })
 export class LevelComponent implements OnInit, OnDestroy {
 
+    routeData?: Data;
+
     currQuestionIndex = 0;
     questions: Question[] = [];
 
@@ -123,7 +161,7 @@ export class LevelComponent implements OnInit, OnDestroy {
         this.route.data
             .pipe(
                 takeUntil(this.destroy$),
-                filter(data => data.leaf),
+                tap(data => this.routeData = data),
                 switchMap(data =>
                     this.questionService.getQuestions$(data.mongoPath)
                 ),
@@ -177,5 +215,16 @@ export class LevelComponent implements OnInit, OnDestroy {
             user.practiceHistory = user.practiceHistory || {};
             user.practiceHistory[questionAnswer._id] = questionAnswer;
         }
+    }
+
+    async resetProgress() {
+
+        if (!this.routeData) return;
+
+        const { result: user } = await lastValueFrom(
+            this.questionService.resetHistory$("practice", this.routeData.mongoPath)
+        );
+
+        this.authService.user = user;
     }
 }
