@@ -67,9 +67,19 @@ function recur(children: any, parentRoute: Route, leafCb: Function) {
 }
 
 console.time("Creating routes");
+
+// Create hierarchical structure
 recur(groups, rootRoute, (leaf: any) => {
     leaf.component = LevelComponent,
     leaf.data = { ...leaf.data, leaf: true }; 
+});
+
+// Sort paths from most particular to most generic
+const dummyRoute = { path: "/" };
+routes.sort((a, b) => {
+    const aSegLen = (a as any || dummyRoute).path.split("/").length;
+    const bSegLen = (b as any || dummyRoute).path.split("/").length;
+    return bSegLen - aSegLen;
 });
 console.timeEnd("Creating routes");
 

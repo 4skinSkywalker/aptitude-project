@@ -25,6 +25,9 @@ export class AuthService {
   get user() {
     return this._user$.getValue();
   }
+  set user(user: User) {
+    this._user$.next(user);
+  }
 
   constructor(
     private http: HttpClient

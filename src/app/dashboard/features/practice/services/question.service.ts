@@ -4,6 +4,7 @@ import { environment } from "src/environments/environment";
 import { Question } from "../models/question";
 import { BasicResponse } from "src/app/models/response";
 import { QuestionAnswer } from "../question.component";
+import { User } from "src/app/models/user";
 
 @Injectable({
     providedIn: 'root'
@@ -27,5 +28,10 @@ export class QuestionService {
     postQuestionAnswer$(mode: "practice" | "adaptive", _id: string, userAnswer: string) {
         const url = `${environment.apiRoot}/questions/answers/${_id}`;
         return this.http.post<BasicResponse<QuestionAnswer>>(url, { mode, userAnswer });
+    }
+
+    resetHistory$(mode: "practice" | "adaptive", mongoPath: string) {
+        const url = `${environment.apiRoot}/questions/answers/reset`;
+        return this.http.post<BasicResponse<User>>(url, { mode, mongoPath });
     }
 }
