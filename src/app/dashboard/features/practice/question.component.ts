@@ -1,8 +1,9 @@
 import { CommonModule } from "@angular/common";
-import { Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges } from "@angular/core";
+import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from "@angular/core";
 import { SharedModule } from "src/app/shared/shared.module";
 import { Question, QuestionOption } from "./models/question";
 import { DifficultyIndicatorComponent } from "./difficulty-indicator.component";
+import { AuthService } from "src/app/services/auth.service";
 
 export interface QuestionAnswer {
     _id: string;
@@ -185,7 +186,7 @@ export interface QuestionAnswer {
         }
     `]
 })
-export class QuestionComponent implements OnInit, OnChanges {
+export class QuestionComponent implements OnChanges {
 
     @Input("mode") mode: "practice" | "adaptive" = "practice";
     @Input("question") question!: Question;
@@ -195,14 +196,26 @@ export class QuestionComponent implements OnInit, OnChanges {
 
     showSolution = false;
 
-    constructor() { }
-
-    ngOnInit() { }
+    constructor(
+        private authService: AuthService
+    ) { }
 
     ngOnChanges(changes: SimpleChanges) {
-        if (changes.question.previousValue !== changes.question.currentValue) {
+
+        const prevQuestion: Question | undefined = changes.question.previousValue;
+        const currQuestion: Question = changes.question.currentValue;
+
+        if (prevQuestion !== currQuestion) {
             this.showSolution = false;
             this.userAnswer = undefined;
+        }
+
+        if (this.mode !== "practice") return;
+
+        const { practiceHistory } = this.authService.user;
+        const alreadyAnswered = practiceHistory?.[currQuestion._id];
+        if (alreadyAnswered) {
+            this.userAnswer = practiceHistory[currQuestion._id].userAnswer;
         }
     }
 

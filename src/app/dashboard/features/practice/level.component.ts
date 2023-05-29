@@ -1,7 +1,7 @@
 import { CommonModule } from "@angular/common";
-import { Component, OnDestroy, OnInit } from "@angular/core";
+import { ChangeDetectorRef, Component, OnDestroy, OnInit } from "@angular/core";
 import { ActivatedRoute, RouterModule } from "@angular/router";
-import { Subject, filter, lastValueFrom, switchMap, takeUntil, tap } from "rxjs";
+import { Subject, combineLatest, filter, lastValueFrom, map, of, switchMap, takeUntil, tap } from "rxjs";
 import { SharedModule } from "src/app/shared/shared.module";
 import { QuestionService } from "./services/question.service";
 import { Question } from "./models/question";
@@ -112,21 +112,43 @@ export class LevelComponent implements OnInit, OnDestroy {
     destroy$ = new Subject<void>();
 
     constructor(
+        private cdRef: ChangeDetectorRef,
         private authService: AuthService,
         private route: ActivatedRoute,
         private questionService: QuestionService
     ) { }
 
     ngOnInit() {
-        this.route
-            .data
+
+        this.route.data
             .pipe(
                 takeUntil(this.destroy$),
                 filter(data => data.leaf),
                 switchMap(data =>
                     this.questionService.getQuestions$(data.mongoPath)
                 ),
-                tap(response => this.questions = response.result)
+                map(({ result: questions }) => { 
+                    this.questions = questions;
+                    return questions;
+                }),
+                switchMap(questions =>
+                    combineLatest([
+                        of(questions),
+                        this.authService.user$
+                    ])
+                ),
+                tap(([ questions, user ]) => {
+                    const { practiceHistory } = user;
+                    let lastAnsweredIndex;
+                    for (let i = questions.length - 1; i > -1; i--) {
+                        if (practiceHistory && practiceHistory[questions[i]._id]) {
+                            lastAnsweredIndex = i;
+                            break;
+                        }
+                    }
+                    this.currQuestionIndex = lastAnsweredIndex || 0;
+                    this.cdRef.detectChanges();
+                })
             )
             .subscribe();
     }

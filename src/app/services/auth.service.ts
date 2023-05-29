@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, map, Observable, tap } from "rxjs";
+import { BehaviorSubject, lastValueFrom, map, Observable, switchMap, tap } from "rxjs";
 import { AnonymousUser, User } from '../models/user';
 import { parseJwt } from '../utils/json';
 import { HttpClient } from '@angular/common/http';
@@ -30,7 +30,7 @@ export class AuthService {
     private http: HttpClient
   ) {
     this.autoSignIn();
-    console.log("user$:", (window as any)["user$"] = this.user$);
+    console.log("_user$", this._user$);
   }
 
   signUp(username: string, email: string, password: string) {
@@ -93,12 +93,19 @@ export class AuthService {
     return this.http.post<BasicResponse<string>>(url, body);
   }
 
-  autoSignIn() {
+  async autoSignIn() {
     const idToken = localStorage.getItem('id_token');
     if (idToken && this.isLoggedIn()) {
+
+      // Initially emit the user from the token...
       this.emitUser(idToken);
+
+      // ...while fetching the updated user object
+      const { result: user } = await lastValueFrom(
+        this.http.get<BasicResponse<User>>(`${environment.apiRoot}/users/me`)
+      );
+      this._user$.next(user);
     }
-    return this.user$;
   }
         
   private setSession(authRes: AuthResult) {

@@ -92,8 +92,7 @@ export class HierarchyComponent implements OnInit, OnDestroy {
 
     ngOnInit() {
 
-        this.route
-            .data
+        this.route.data
             .pipe(
                 takeUntil(this.destroy$),
                 filter(data => !data.leaf),
@@ -102,8 +101,7 @@ export class HierarchyComponent implements OnInit, OnDestroy {
             )
             .subscribe();
 
-        this.route
-            .url
+        this.route.url
             .pipe(
                 takeUntil(this.destroy$),
                 tap(segments => {
