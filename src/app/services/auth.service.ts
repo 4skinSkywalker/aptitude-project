@@ -30,7 +30,7 @@ export class AuthService {
     private http: HttpClient
   ) {
     this.autoSignIn();
-    console.log("_user$", this._user$);
+    // console.log("_user$", this._user$);
   }
 
   signUp(username: string, email: string, password: string) {

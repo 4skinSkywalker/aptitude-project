@@ -132,20 +132,21 @@ export class LevelComponent implements OnInit, OnDestroy {
                     return questions;
                 }),
                 switchMap(questions =>
-                    combineLatest([
-                        of(questions),
-                        this.authService.user$
-                    ])
+                    combineLatest([ of(questions), this.authService.user$ ])
                 ),
                 tap(([ questions, user ]) => {
+
                     const { practiceHistory } = user;
+                    if (!practiceHistory) return;
+
                     let lastAnsweredIndex;
                     for (let i = questions.length - 1; i > -1; i--) {
-                        if (practiceHistory && practiceHistory[questions[i]._id]) {
+                        if (practiceHistory[questions[i]._id]) {
                             lastAnsweredIndex = i;
                             break;
                         }
                     }
+
                     this.currQuestionIndex = lastAnsweredIndex || 0;
                     this.cdRef.detectChanges();
                 })

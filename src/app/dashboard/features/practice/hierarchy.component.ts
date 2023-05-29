@@ -1,11 +1,25 @@
 import { CommonModule } from "@angular/common";
 import { Component, OnDestroy, OnInit } from "@angular/core";
 import { ActivatedRoute, Route, Router, RouterModule } from "@angular/router";
-import { Subject, filter, map, takeUntil, tap } from "rxjs";
+import { Subject, combineLatest, filter, map, of, switchMap, takeUntil, tap } from "rxjs";
 import { SharedModule } from "src/app/shared/shared.module";
 import { routes } from "./practice.module";
 import { FormControl } from "@angular/forms";
 import { jsonCopy } from "src/app/utils/json";
+import { AuthService } from "src/app/services/auth.service";
+
+interface HierarchyLink {
+    parentPath: string;
+    path: string;
+    title: {
+        custom: string;
+        escaped: string;
+        original: string;
+        translated: boolean;
+    };
+    questions: number;
+    answered: number;
+}
 
 @Component({
     standalone: true,
@@ -49,7 +63,9 @@ import { jsonCopy } from "src/app/utils/json";
                     >
                         {{ link.title.custom }}
                     </a>
-                    <small class="text-muted">0 / {{ link.questions }} questions</small>
+                    <small class="text-muted">
+                        {{ link.answered || 0 }} / {{ link.questions }} questions
+                    </small>
                 </div>
             </ng-container>
         </div>
@@ -76,7 +92,7 @@ import { jsonCopy } from "src/app/utils/json";
 })
 export class HierarchyComponent implements OnInit, OnDestroy {
 
-    links: { path: string, title: any, questions: number }[] = [];
+    links: HierarchyLink[] = [];
 
     searchCtrl = new FormControl();
     searchFormatter = (route: Route) => route.path;
@@ -86,6 +102,7 @@ export class HierarchyComponent implements OnInit, OnDestroy {
     destroy$ = new Subject<void>();
 
     constructor(
+        private authService: AuthService,
         private router: Router,
         private route: ActivatedRoute
     ) { }
@@ -96,8 +113,30 @@ export class HierarchyComponent implements OnInit, OnDestroy {
             .pipe(
                 takeUntil(this.destroy$),
                 filter(data => !data.leaf),
-                map(data => Object.values(data.children)),
-                tap((links: any) => this.links = links)
+                map(data => {
+                    this.links = Object.values(data.children) as HierarchyLink[];
+                    this.links.forEach(link => link.parentPath = data.mongoPath);
+                    return this.links;
+                }),
+                switchMap(links =>
+                    combineLatest([ of(links), this.authService.user$ ])
+                ),
+                tap(([ links, user ]) => {
+
+                    const { practiceHistory } = user;
+                    if (!practiceHistory) return;
+
+                    // Get the number of answered questions
+                    (links as HierarchyLink[]).forEach(link => {
+
+                        link.answered = 0;
+                        const catPath = `${link.parentPath}${link.title.original},`;
+
+                        Object.values(practiceHistory).forEach(ans =>
+                            link.answered += ans.path.indexOf(catPath) > -1 ? 1 : 0
+                        );
+                    });
+                })
             )
             .subscribe();
 
@@ -106,20 +145,17 @@ export class HierarchyComponent implements OnInit, OnDestroy {
                 takeUntil(this.destroy$),
                 tap(segments => {
                     const segment = segments.join("/");
-                    // console.log("Segment", segment);
                     const copyOfRoutes = jsonCopy(routes) as any[];
                     this.filteredRoutes = copyOfRoutes.filter(r => r.path?.includes(segment));
                     this.filteredRoutes.shift();
                     this.filteredRoutes.forEach((r: any) =>
                         r.text = r.data.mongoPath?.split(",").slice(-2)[0]
                     );
-                    // console.log("Filtered routes", this.filteredRoutes);
                 })
             )
             .subscribe();
 
-        this.searchCtrl
-            .valueChanges
+        this.searchCtrl.valueChanges
             .pipe(
                 takeUntil(this.destroy$),
                 filter(route => !!route),
