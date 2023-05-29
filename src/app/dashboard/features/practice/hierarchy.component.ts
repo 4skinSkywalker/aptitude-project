@@ -90,10 +90,7 @@ interface HierarchyLink {
 
         <div class="cat-grid">
             <ng-container *ngFor="let link of links">
-                <div
-                    *ngIf="+link.questions > -1"
-                    class="cat-grid__item animated"
-                >
+                <div class="cat-grid__item animated">
 
                     <a
                         class="stretched-link text-decoration-none text-reset"
