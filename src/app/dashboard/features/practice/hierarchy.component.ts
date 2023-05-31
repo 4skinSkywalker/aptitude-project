@@ -51,13 +51,13 @@ interface HierarchyLink {
             </div>
         </dialog>
 
-        <div class="d-flex flex-wrap gap-3 justify-content-center justify-content-md-between align-items-center px-3">
+        <div class="d-flex flex-wrap gap-3 justify-content-center justify-content-md-between align-items-center p-3">
 
             <app-breadcrumb-router></app-breadcrumb-router>
 
             <button
                 *ngIf="routeData"
-                class="btn btn-outline-danger"
+                class="btn btn-outline-danger mb-3"
                 (click)="d.showModal()"
             >
                 Reset progresses <i class="bi bi-trash3 ps-2"></i>
